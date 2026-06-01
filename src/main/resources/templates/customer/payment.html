@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/customer-layout :: customerLayout('Payment', ~{::section})}">
+<body>
+<section class="space-y-6"
+         x-data="{ method: $el.dataset.selectedMethod || 'EWALLET' }"
+         th:data-selected-method="${paymentRequest.paymentMethod != null ? paymentRequest.paymentMethod.name() : 'EWALLET'}">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <a th:href="@{/customer/orders/{id}(id=${paymentData.orderId})}" class="inline-flex text-sm font-semibold text-emerald-700 transition hover:text-emerald-800">
+                Back to order
+            </a>
+            <h2 class="mt-3 text-2xl font-semibold text-slate-950" th:text="${'Payment for Order #' + paymentData.orderId}">Payment</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                Choose a payment method for this order. Payment outcomes are simulated for the demo.
+            </p>
+        </div>
+        <span th:replace="~{fragments/status-badge :: statusBadge(${paymentData.orderStatus.name()})}">PENDING</span>
+    </div>
+
+    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <span th:text="${errorMessage}">Payment error.</span>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div class="space-y-6">
+            <div data-animate="payment-panel" class="nexa-card overflow-hidden">
+                <div class="border-b border-slate-200 px-5 py-4">
+                    <h3 class="text-base font-semibold text-slate-950">Order Summary</h3>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    <article th:each="item : ${paymentData.items}" class="flex gap-4 p-5">
+                        <img th:if="${item.productImageUrl != null and item.productImageUrl != ''}"
+                             th:src="@{${item.productImageUrl}}"
+                             th:alt="${item.productName}"
+                             class="h-16 w-16 rounded-xl object-cover ring-1 ring-slate-200">
+                        <div th:unless="${item.productImageUrl != null and item.productImageUrl != ''}"
+                             class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-bold text-slate-500 ring-1 ring-slate-200"
+                             th:text="${#strings.substring(item.productName, 0, 1)}">P</div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-slate-950" th:text="${item.productName}">Product</h4>
+                                    <p class="mt-1 text-xs text-slate-500" th:text="${item.productCategory}">Category</p>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-950"
+                                   th:text="${'Rp ' + #numbers.formatDecimal(item.subtotal, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</p>
+                            </div>
+                            <p class="mt-2 text-sm text-slate-600">
+                                <span th:text="${item.quantity}">1</span>
+                                <span> x </span>
+                                <span th:text="${'Rp ' + #numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</span>
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div th:if="${paymentData.id != null}" data-animate="payment-panel" class="nexa-card p-6">
+                <h3 class="text-base font-semibold text-slate-950">Payment Already Submitted</h3>
+                <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                    <div class="rounded-xl bg-slate-50 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Method</p>
+                        <p class="mt-2 text-sm font-semibold text-slate-950" th:text="${paymentData.paymentMethod}">EWALLET</p>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</p>
+                        <div class="mt-2">
+                            <span th:replace="~{fragments/payment-badge :: paymentBadge(${paymentData.paymentStatus.name()})}">PAID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form th:if="${paymentData.id == null}"
+                  th:action="@{/customer/payment/{orderId}(orderId=${paymentData.orderId})}"
+                  th:object="${paymentRequest}"
+                  method="post"
+                  class="space-y-4">
+                <div class="grid gap-4 lg:grid-cols-3">
+                    <label data-animate="payment-card"
+                           class="cursor-pointer rounded-2xl border bg-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+                           :class="method === 'EWALLET' ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-slate-200'">
+                        <input type="radio" th:field="*{paymentMethod}" value="EWALLET" class="sr-only" x-model="method">
+                        <span class="text-sm font-semibold text-slate-950">E-Wallet</span>
+                        <span class="mt-2 block text-sm leading-5 text-slate-600">Instant simulated confirmation.</span>
+                    </label>
+                    <label data-animate="payment-card"
+                           class="cursor-pointer rounded-2xl border bg-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+                           :class="method === 'BANK_TRANSFER' ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-slate-200'">
+                        <input type="radio" th:field="*{paymentMethod}" value="BANK_TRANSFER" class="sr-only" x-model="method">
+                        <span class="text-sm font-semibold text-slate-950">Bank Transfer</span>
+                        <span class="mt-2 block text-sm leading-5 text-slate-600">Waits for admin confirmation.</span>
+                    </label>
+                    <label data-animate="payment-card"
+                           class="cursor-pointer rounded-2xl border bg-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+                           :class="method === 'CASH_ON_DELIVERY' ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-slate-200'">
+                        <input type="radio" th:field="*{paymentMethod}" value="CASH_ON_DELIVERY" class="sr-only" x-model="method">
+                        <span class="text-sm font-semibold text-slate-950">Cash on Delivery</span>
+                        <span class="mt-2 block text-sm leading-5 text-slate-600">Pay when the order is delivered.</span>
+                    </label>
+                </div>
+
+                <p th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}" class="text-sm font-medium text-red-600">Payment method error</p>
+
+                <div data-animate="payment-panel" class="nexa-card p-6">
+                    <h3 class="text-base font-semibold text-slate-950">Payment Instructions</h3>
+                    <div class="mt-4 text-sm leading-6 text-slate-600">
+                        <p x-show="method === 'EWALLET'">
+                            E-Wallet is simulated as instantly successful. The order becomes PAID immediately and stock is reduced once.
+                        </p>
+                        <p x-show="method === 'BANK_TRANSFER'">
+                            Bank Transfer is saved as WAITING_CONFIRMATION. Admin must confirm it before the order becomes PAID.
+                        </p>
+                        <p x-show="method === 'CASH_ON_DELIVERY'">
+                            Cash on Delivery confirms the payment arrangement. The order becomes PAID for processing, while payment stays PENDING.
+                        </p>
+                    </div>
+                    <button type="submit" class="mt-6 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                        Submit Payment Method
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <aside data-animate="payment-panel" class="nexa-card h-fit p-6">
+            <h3 class="text-base font-semibold text-slate-950">Amount Due</h3>
+            <p class="mt-4 text-3xl font-semibold text-emerald-700"
+               th:text="${'Rp ' + #numbers.formatDecimal(paymentData.amount, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</p>
+            <div class="mt-6 space-y-4 border-t border-slate-100 pt-5 text-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Order</span>
+                    <span class="font-semibold text-slate-950" th:text="${'#' + paymentData.orderId}">#1</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Order status</span>
+                    <span class="font-semibold text-slate-950" th:text="${paymentData.orderStatus}">PENDING</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+</body>
+</html>

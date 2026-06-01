@@ -79,6 +79,33 @@
             </div>
 
             <div data-animate="order-summary" class="nexa-card p-6">
+                <h3 class="text-base font-semibold text-slate-950">Payment</h3>
+                <div th:if="${payment != null}" class="mt-5 space-y-4 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Method</span>
+                        <span class="font-semibold text-slate-950" th:text="${payment.paymentMethod}">EWALLET</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Payment</span>
+                        <span th:replace="~{fragments/payment-badge :: paymentBadge(${payment.paymentStatus.name()})}">PAID</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Amount</span>
+                        <span class="font-semibold text-slate-950"
+                              th:text="${'Rp ' + #numbers.formatDecimal(payment.amount, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</span>
+                    </div>
+                    <a th:if="${payment.confirmable}"
+                       th:href="@{/admin/payments}"
+                       class="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                        Review Confirmation
+                    </a>
+                </div>
+                <p th:if="${payment == null}" class="mt-4 text-sm leading-6 text-slate-600">
+                    No payment has been submitted for this order.
+                </p>
+            </div>
+
+            <div data-animate="order-summary" class="nexa-card p-6">
                 <h3 class="text-base font-semibold text-slate-950">Status Update</h3>
                 <div class="mt-4 space-y-3">
                     <select class="nexa-input" disabled>

@@ -69,4 +69,19 @@ document.addEventListener("DOMContentLoaded", function () {
         stagger: 0.05,
         ease: "power2.out"
     });
+
+    gsap.from("[data-animate='payment-card']", {
+        duration: 0.42,
+        y: 16,
+        opacity: 0,
+        stagger: 0.06,
+        ease: "power2.out"
+    });
+
+    gsap.from("[data-animate='payment-panel']", {
+        duration: 0.42,
+        y: 14,
+        opacity: 0,
+        ease: "power2.out"
+    });
 });

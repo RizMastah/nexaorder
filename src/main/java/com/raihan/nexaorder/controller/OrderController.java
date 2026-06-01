@@ -4,6 +4,7 @@ import com.raihan.nexaorder.dto.CreateOrderRequestDTO;
 import com.raihan.nexaorder.dto.OrderResponseDTO;
 import com.raihan.nexaorder.dto.ProductResponseDTO;
 import com.raihan.nexaorder.service.OrderService;
+import com.raihan.nexaorder.service.PaymentService;
 import com.raihan.nexaorder.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ public class OrderController {
 
     private final OrderService orderService;
     private final ProductService productService;
+    private final PaymentService paymentService;
 
     @GetMapping("/customer/orders/create")
     public String createOrderForm(@RequestParam Long productId, Model model, RedirectAttributes redirectAttributes) {
@@ -81,6 +83,7 @@ public class OrderController {
                                       RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("order", orderService.getOrderByIdForUser(id, currentUserId(session)));
+            model.addAttribute("payment", paymentService.findPaymentByOrderId(id).orElse(null));
             return "customer/order-detail";
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -114,6 +117,7 @@ public class OrderController {
                                    RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("order", orderService.getOrderById(id));
+            model.addAttribute("payment", paymentService.findPaymentByOrderId(id).orElse(null));
             return "admin/order-detail";
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
