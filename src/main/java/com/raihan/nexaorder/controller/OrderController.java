@@ -4,6 +4,7 @@ import com.raihan.nexaorder.dto.CreateOrderRequestDTO;
 import com.raihan.nexaorder.dto.OrderResponseDTO;
 import com.raihan.nexaorder.dto.ProductResponseDTO;
 import com.raihan.nexaorder.enums.OrderStatus;
+import com.raihan.nexaorder.service.InvoiceService;
 import com.raihan.nexaorder.service.OrderService;
 import com.raihan.nexaorder.service.PaymentService;
 import com.raihan.nexaorder.service.ProductService;
@@ -27,6 +28,7 @@ public class OrderController {
     private final OrderService orderService;
     private final ProductService productService;
     private final PaymentService paymentService;
+    private final InvoiceService invoiceService;
 
     @GetMapping("/customer/orders/create")
     public String createOrderForm(@RequestParam Long productId, Model model, RedirectAttributes redirectAttributes) {
@@ -85,6 +87,7 @@ public class OrderController {
         try {
             model.addAttribute("order", orderService.getOrderByIdForUser(id, currentUserId(session)));
             model.addAttribute("payment", paymentService.findPaymentByOrderId(id).orElse(null));
+            model.addAttribute("invoice", invoiceService.findInvoiceByOrderId(id).orElse(null));
             return "customer/order-detail";
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -119,6 +122,7 @@ public class OrderController {
         try {
             model.addAttribute("order", orderService.getOrderById(id));
             model.addAttribute("payment", paymentService.findPaymentByOrderId(id).orElse(null));
+            model.addAttribute("invoice", invoiceService.findInvoiceByOrderId(id).orElse(null));
             return "admin/order-detail";
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());

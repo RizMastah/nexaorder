@@ -11,7 +11,7 @@
                     Welcome back, <span th:text="${session.userName ?: 'Admin'}">Admin</span>
                 </h2>
                 <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                    This dashboard shell is ready for product, order, payment, inventory, and report modules in the next phases.
+                    Monitor order activity, sales, and inventory attention points from one operational workspace.
                 </p>
             </div>
             <span class="inline-flex w-fit rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800"
@@ -22,38 +22,55 @@
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article data-animate="dashboard-card" class="nexa-card p-5">
             <p class="text-sm font-semibold text-slate-500">Total Orders</p>
-            <p class="mt-3 text-3xl font-semibold text-slate-950">0</p>
-            <p class="mt-2 text-sm text-slate-500">Placeholder metric</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-950" th:text="${report.totalOrders}">0</p>
+            <p class="mt-2 text-sm text-slate-500">All recorded orders</p>
         </article>
         <article data-animate="dashboard-card" class="nexa-card p-5">
             <p class="text-sm font-semibold text-slate-500">Total Sales</p>
-            <p class="mt-3 text-3xl font-semibold text-slate-950">Rp 0</p>
-            <p class="mt-2 text-sm text-slate-500">Placeholder metric</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-950"
+               th:text="${'Rp ' + #numbers.formatDecimal(report.totalSales, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</p>
+            <p class="mt-2 text-sm text-slate-500">Paid and processable orders</p>
         </article>
         <article data-animate="dashboard-card" class="nexa-card p-5">
             <p class="text-sm font-semibold text-slate-500">Pending Orders</p>
-            <p class="mt-3 text-3xl font-semibold text-slate-950">0</p>
-            <p class="mt-2 text-sm text-slate-500">Placeholder metric</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-950" th:text="${report.pendingOrdersCount}">0</p>
+            <p class="mt-2 text-sm text-slate-500">Waiting for payment</p>
         </article>
         <article data-animate="dashboard-card" class="nexa-card p-5">
             <p class="text-sm font-semibold text-slate-500">Low Stock Products</p>
-            <p class="mt-3 text-3xl font-semibold text-slate-950">0</p>
-            <p class="mt-2 text-sm text-slate-500">Placeholder metric</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-950" th:text="${report.lowStockProductsCount}">0</p>
+            <p class="mt-2 text-sm text-slate-500">Needs review</p>
         </article>
     </div>
 
     <div class="grid gap-4 lg:grid-cols-3">
         <section class="nexa-card p-6 lg:col-span-2">
             <h3 class="text-base font-semibold text-slate-950">Operational Overview</h3>
-            <div class="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-                <p class="text-sm font-medium text-slate-600">Charts and recent orders will be connected in later phases.</p>
+            <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-6">
+                <div class="grid gap-4 sm:grid-cols-3">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-500">Paid</p>
+                        <p class="mt-2 text-2xl font-semibold text-emerald-700" th:text="${report.paidOrdersCount}">0</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-500">Processing</p>
+                        <p class="mt-2 text-2xl font-semibold text-sky-700" th:text="${report.processingOrdersCount}">0</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-500">Completed</p>
+                        <p class="mt-2 text-2xl font-semibold text-slate-950" th:text="${report.completedOrdersCount}">0</p>
+                    </div>
+                </div>
+                <a th:href="@{/admin/reports}" class="mt-6 inline-flex text-sm font-semibold text-emerald-700 transition hover:text-emerald-800">
+                    Open report dashboard
+                </a>
             </div>
         </section>
         <section class="nexa-card p-6">
-            <h3 class="text-base font-semibold text-slate-950">Layout Status</h3>
+            <h3 class="text-base font-semibold text-slate-950">Report Export</h3>
             <div class="mt-4 space-y-3 text-sm text-slate-600">
-                <p>Sidebar, topbar, dropdowns, and dashboard cards are active.</p>
-                <p>Business data is intentionally not implemented in this phase.</p>
+                <p>CSV export is available from the report page for summaries and recent orders.</p>
+                <a th:href="@{/admin/reports/export}" class="nexa-btn-secondary mt-2">Export CSV</a>
             </div>
         </section>
     </div>

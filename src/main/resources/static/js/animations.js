@@ -107,4 +107,27 @@ document.addEventListener("DOMContentLoaded", function () {
         opacity: 0,
         ease: "power2.out"
     });
+
+    gsap.from("[data-animate='report-card']", {
+        duration: 0.42,
+        y: 16,
+        opacity: 0,
+        stagger: 0.05,
+        ease: "power2.out"
+    });
+
+    gsap.from("[data-animate='report-chart']", {
+        duration: 0.42,
+        y: 16,
+        opacity: 0,
+        stagger: 0.06,
+        ease: "power2.out"
+    });
+
+    gsap.from("[data-animate='invoice-card']", {
+        duration: 0.38,
+        y: 12,
+        opacity: 0,
+        ease: "power2.out"
+    });
 });

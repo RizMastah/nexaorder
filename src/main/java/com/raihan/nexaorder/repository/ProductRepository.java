@@ -21,6 +21,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByStockLessThanEqualOrderByStockAsc(Integer threshold);
 
+    long countByStockLessThanEqual(Integer threshold);
+
     @Query("""
             select p from Product p
             where (:keyword is null

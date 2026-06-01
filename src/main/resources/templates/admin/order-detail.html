@@ -110,6 +110,14 @@
                 <p th:if="${payment == null}" class="mt-4 text-sm leading-6 text-slate-600">
                     No payment has been submitted for this order.
                 </p>
+                <div th:if="${invoice != null}" class="mt-5 rounded-xl bg-slate-50 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Invoice</p>
+                    <p class="mt-1 text-sm font-semibold text-slate-950" th:text="${invoice.invoiceNumber}">INV-2026-0001</p>
+                </div>
+                <a th:href="@{/admin/invoices/{id}(id=${order.id})}"
+                   class="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    View Invoice
+                </a>
             </div>
 
             <div data-animate="order-summary" class="nexa-card p-6">
