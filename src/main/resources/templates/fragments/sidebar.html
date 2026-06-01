@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar(role)"
+       class="fixed inset-y-0 left-0 z-40 w-72 border-r border-slate-200 bg-white transition-transform duration-300 lg:translate-x-0"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <div class="flex h-full flex-col">
+        <div class="flex h-16 items-center gap-3 border-b border-slate-200 px-6">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-base font-bold text-white">
+                N
+            </div>
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">NexaOrder</p>
+                <p class="text-xs font-medium text-slate-500">Order Management</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1 px-4 py-5">
+            <div th:if="${role == 'ADMIN'}" class="space-y-1">
+                <a th:href="@{/admin/dashboard}" data-nav-link="/admin/dashboard" class="nexa-nav-link">Dashboard</a>
+                <a th:href="@{/admin/users}" data-nav-link="/admin/users" class="nexa-nav-link">Users</a>
+                <a th:href="@{/admin/products}" data-nav-link="/admin/products" class="nexa-nav-link">Products</a>
+                <a th:href="@{/admin/orders}" data-nav-link="/admin/orders" class="nexa-nav-link">Orders</a>
+                <a th:href="@{/admin/payments}" data-nav-link="/admin/payments" class="nexa-nav-link">Payments</a>
+                <a th:href="@{/admin/inventory}" data-nav-link="/admin/inventory" class="nexa-nav-link">Inventory</a>
+                <a th:href="@{/admin/reports}" data-nav-link="/admin/reports" class="nexa-nav-link">Reports</a>
+                <a th:href="@{/admin/notifications}" data-nav-link="/admin/notifications" class="nexa-nav-link">Notifications</a>
+            </div>
+
+            <div th:if="${role == 'CUSTOMER'}" class="space-y-1">
+                <a th:href="@{/customer/dashboard}" data-nav-link="/customer/dashboard" class="nexa-nav-link">Dashboard</a>
+                <a th:href="@{/customer/products}" data-nav-link="/customer/products" class="nexa-nav-link">Products</a>
+                <a th:href="@{/customer/orders}" data-nav-link="/customer/orders" class="nexa-nav-link">My Orders</a>
+                <a th:href="@{/customer/notifications}" data-nav-link="/customer/notifications" class="nexa-nav-link">Notifications</a>
+            </div>
+        </nav>
+
+        <div class="border-t border-slate-200 p-4">
+            <div class="rounded-xl bg-slate-50 p-4">
+                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Signed in</p>
+                <p class="mt-1 truncate text-sm font-semibold text-slate-950" th:text="${session.userName ?: 'NexaOrder User'}">NexaOrder User</p>
+                <p class="text-xs font-medium text-emerald-700" th:text="${session.userRole ?: role}">ROLE</p>
+            </div>
+        </div>
+    </div>
+</aside>
+</body>
+</html>

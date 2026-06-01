@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="topbar(pageTitle)" class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div class="flex min-w-0 items-center gap-3">
+            <button type="button"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
+                    @click="toggleSidebar()"
+                    aria-label="Toggle sidebar">
+                <span class="space-y-1.5">
+                    <span class="block h-0.5 w-5 bg-slate-700"></span>
+                    <span class="block h-0.5 w-5 bg-slate-700"></span>
+                    <span class="block h-0.5 w-5 bg-slate-700"></span>
+                </span>
+            </button>
+            <div class="min-w-0">
+                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Workspace</p>
+                <h1 class="truncate text-lg font-semibold text-slate-950" th:text="${pageTitle}">Dashboard</h1>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div th:replace="~{fragments/notification-dropdown :: notificationDropdown}"></div>
+
+            <div class="relative">
+                <button type="button"
+                        class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-left transition hover:bg-slate-50"
+                        @click="profileOpen = !profileOpen; notificationsOpen = false">
+                    <span class="hidden text-right sm:block">
+                        <span class="block max-w-32 truncate text-sm font-semibold text-slate-900"
+                              th:text="${session.userName ?: 'NexaOrder User'}">NexaOrder User</span>
+                        <span class="block text-xs font-medium text-slate-500"
+                              th:text="${session.userRole ?: 'USER'}">USER</span>
+                    </span>
+                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white"
+                          th:text="${session.userName != null ? #strings.substring(session.userName, 0, 1) : 'N'}">N</span>
+                </button>
+
+                <div x-cloak
+                     x-show="profileOpen"
+                     @click.outside="profileOpen = false"
+                     x-transition.opacity
+                     class="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                    <div class="px-3 py-2">
+                        <p class="truncate text-sm font-semibold text-slate-950" th:text="${session.userName ?: 'NexaOrder User'}">NexaOrder User</p>
+                        <p class="text-xs font-medium text-slate-500" th:text="${session.userRole ?: 'USER'}">USER</p>
+                    </div>
+                    <div class="my-2 border-t border-slate-100"></div>
+                    <form th:action="@{/auth/logout}" method="post">
+                        <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+</body>
+</html>

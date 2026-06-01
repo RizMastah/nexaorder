@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/customer-layout :: customerLayout('Products', ~{::section})}">
+<body>
+<section class="space-y-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Product Catalog</p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-950">Browse Products</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                Find available products and review stock before placing an order.
+            </p>
+        </div>
+    </div>
+
+    <form th:action="@{/customer/products}" method="get" class="nexa-card p-4">
+        <div class="grid gap-3 lg:grid-cols-[1fr_220px_auto_auto]">
+            <div>
+                <label for="keyword" class="sr-only">Search products</label>
+                <input id="keyword"
+                       name="keyword"
+                       type="search"
+                       th:value="${keyword}"
+                       class="nexa-input"
+                       placeholder="Search products">
+            </div>
+            <div>
+                <label for="category" class="sr-only">Category</label>
+                <select id="category" name="category" class="nexa-input">
+                    <option value="">All categories</option>
+                    <option th:each="categoryName : ${categories}"
+                            th:value="${categoryName}"
+                            th:selected="${selectedCategory == categoryName}"
+                            th:text="${categoryName}">Category</option>
+                </select>
+            </div>
+            <button type="submit" class="nexa-btn-primary px-5">Filter</button>
+            <a th:href="@{/customer/products}" class="nexa-btn-secondary px-5">Reset</a>
+        </div>
+    </form>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <article th:each="product : ${products}" data-animate="product-card" class="nexa-card overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
+            <div class="relative h-48 bg-slate-100">
+                <img th:if="${product.imageUrl != null and product.imageUrl != ''}"
+                     th:src="@{${product.imageUrl}}"
+                     th:alt="${product.name}"
+                     class="h-full w-full object-cover">
+                <div th:unless="${product.imageUrl != null and product.imageUrl != ''}"
+                     class="flex h-full w-full items-center justify-center bg-slate-100">
+                    <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-bold text-slate-400 ring-1 ring-slate-200"
+                         th:text="${#strings.substring(product.name, 0, 1)}">P</div>
+                </div>
+                <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200"
+                      th:text="${product.category}">Category</span>
+            </div>
+            <div class="p-5">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <h3 class="truncate text-base font-semibold text-slate-950" th:text="${product.name}">Product</h3>
+                        <p class="mt-2 text-sm font-semibold text-emerald-700"
+                           th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</p>
+                    </div>
+                    <span th:if="${product.outOfStock}"
+                          class="shrink-0 rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+                        Sold out
+                    </span>
+                    <span th:if="${!product.outOfStock and product.lowStock}"
+                          class="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">
+                        Low
+                    </span>
+                    <span th:if="${!product.outOfStock and !product.lowStock}"
+                          class="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+                        Ready
+                    </span>
+                </div>
+                <p class="mt-3 line-clamp-2 min-h-10 text-sm leading-5 text-slate-600" th:text="${product.description ?: 'No product description available.'}">
+                    Product description
+                </p>
+                <div class="mt-5 flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium text-slate-500" th:text="${product.stock + ' units'}">0 units</p>
+                    <a th:href="@{/customer/products/{id}(id=${product.id})}" class="nexa-btn-secondary py-2">
+                        Detail
+                    </a>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <div th:if="${#lists.isEmpty(products)}" class="nexa-card p-10 text-center">
+        <p class="text-sm font-medium text-slate-600">No products match the current filter.</p>
+    </div>
+</section>
+</body>
+</html>

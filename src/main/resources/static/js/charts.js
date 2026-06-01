@@ -1,0 +1,1 @@
+window.NexaCharts = window.NexaCharts || {};

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/customer-layout :: customerLayout(${product.name}, ~{::section})}">
+<body>
+<section class="space-y-6">
+    <div>
+        <a th:href="@{/customer/products}" class="inline-flex text-sm font-semibold text-emerald-700 transition hover:text-emerald-800">
+            Back to products
+        </a>
+    </div>
+
+    <div data-animate="product-form" class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <img th:if="${product.imageUrl != null and product.imageUrl != ''}"
+                 th:src="@{${product.imageUrl}}"
+                 th:alt="${product.name}"
+                 class="h-[420px] w-full object-cover">
+            <div th:unless="${product.imageUrl != null and product.imageUrl != ''}"
+                 class="flex h-[420px] w-full items-center justify-center bg-slate-100">
+                <div class="flex h-24 w-24 items-center justify-center rounded-3xl bg-white text-3xl font-bold text-slate-400 ring-1 ring-slate-200"
+                     th:text="${#strings.substring(product.name, 0, 1)}">P</div>
+            </div>
+        </div>
+
+        <aside class="nexa-card p-6">
+            <span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800"
+                  th:text="${product.category}">Category</span>
+            <h2 class="mt-4 text-2xl font-semibold text-slate-950" th:text="${product.name}">Product name</h2>
+            <p class="mt-3 text-2xl font-semibold text-emerald-700"
+               th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</p>
+
+            <div class="mt-5">
+                <span th:if="${product.outOfStock}"
+                      class="inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-700">
+                    Out of stock
+                </span>
+                <span th:if="${!product.outOfStock and product.lowStock}"
+                      class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800"
+                      th:text="${product.stock + ' units left'}">Low stock</span>
+                <span th:if="${!product.outOfStock and !product.lowStock}"
+                      class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800"
+                      th:text="${product.stock + ' units available'}">Available</span>
+            </div>
+
+            <div class="mt-6 border-t border-slate-100 pt-6">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Description</h3>
+                <p class="mt-3 text-sm leading-6 text-slate-600" th:text="${product.description ?: 'No product description available.'}">
+                    Product description
+                </p>
+            </div>
+
+            <a th:href="@{/customer/orders/create(productId=${product.id})}"
+               class="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                Create Order
+            </a>
+        </aside>
+    </div>
+</section>
+</body>
+</html>

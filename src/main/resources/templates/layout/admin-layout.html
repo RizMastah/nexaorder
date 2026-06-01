@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="adminLayout(pageTitle, content)">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div class="min-h-screen" x-data="nexaLayout()">
+    <div x-cloak
+         x-show="sidebarOpen"
+         x-transition.opacity
+         class="fixed inset-0 z-30 bg-slate-950/30 lg:hidden"
+         @click="closeSidebar()">
+    </div>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN')}"></div>
+
+    <div class="flex min-h-screen flex-col lg:pl-72">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+            <div data-animate="page">
+                <th:block th:replace="${content}"></th:block>
+            </div>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+</body>
+</html>

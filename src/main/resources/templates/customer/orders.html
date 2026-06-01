@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/customer-layout :: customerLayout('My Orders', ~{::section})}">
+<body>
+<section class="space-y-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Order History</p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-950">My Orders</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                Track created orders and review current order status.
+            </p>
+        </div>
+        <a th:href="@{/customer/products}" class="nexa-btn-primary">Browse products</a>
+    </div>
+
+    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+        <span th:text="${successMessage}">Order updated.</span>
+    </div>
+    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <span th:text="${errorMessage}">Order error.</span>
+    </div>
+
+    <div data-animate="order-list" class="nexa-card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                <tr>
+                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Order</th>
+                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Total</th>
+                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Date</th>
+                    <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Action</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                <tr th:each="order : ${orders}" class="transition hover:bg-slate-50">
+                    <td class="px-5 py-4">
+                        <p class="text-sm font-semibold text-slate-950" th:text="${'Order #' + order.id}">Order #1</p>
+                        <p class="mt-1 text-xs text-slate-500" th:text="${#lists.size(order.items) + ' item(s)'}">1 item</p>
+                    </td>
+                    <td class="px-5 py-4">
+                        <span th:replace="~{fragments/status-badge :: statusBadge(${order.status.name()})}">PENDING</span>
+                    </td>
+                    <td class="px-5 py-4 text-sm font-semibold text-slate-950"
+                        th:text="${'Rp ' + #numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</td>
+                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-600"
+                        th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</td>
+                    <td class="px-5 py-4 text-right">
+                        <a th:href="@{/customer/orders/{id}(id=${order.id})}" class="nexa-btn-secondary py-2">Detail</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(orders)}">
+                    <td colspan="5" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                        No orders have been created yet.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

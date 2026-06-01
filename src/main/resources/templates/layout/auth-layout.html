@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="authLayout(pageTitle, content)">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<main class="flex min-h-screen items-center justify-center px-6 py-10">
+    <div class="w-full max-w-md">
+        <th:block th:replace="${content}"></th:block>
+    </div>
+</main>
+</body>
+</html>
