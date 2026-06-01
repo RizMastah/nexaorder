@@ -8,6 +8,9 @@ import com.raihan.nexaorder.entity.OrderItem;
 import com.raihan.nexaorder.entity.Product;
 import com.raihan.nexaorder.entity.User;
 import com.raihan.nexaorder.enums.OrderStatus;
+import com.raihan.nexaorder.pattern.observer.OrderEventPublisher;
+import com.raihan.nexaorder.pattern.state.OrderState;
+import com.raihan.nexaorder.pattern.state.OrderStateFactory;
 import com.raihan.nexaorder.repository.OrderItemRepository;
 import com.raihan.nexaorder.repository.OrderRepository;
 import com.raihan.nexaorder.repository.ProductRepository;
@@ -28,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderStateFactory orderStateFactory;
+    private final OrderEventPublisher orderEventPublisher;
 
     @Override
     @Transactional
@@ -108,12 +113,43 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Order was not found"));
 
-        if (!OrderStatus.PENDING.equals(order.getStatus())) {
-            throw new IllegalArgumentException("Only pending orders can be cancelled");
+        return changeStatus(order, OrderStatus.CANCELLED);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponseDTO markOrderAsPaid(Long orderId) {
+        Order order = orderRepository.findDetailedById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order was not found"));
+
+        if (OrderStatus.PAID.equals(order.getStatus())) {
+            return OrderResponseDTO.fromEntity(order);
         }
 
-        order.setStatus(OrderStatus.CANCELLED);
+        return changeStatus(order, OrderStatus.PAID);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponseDTO updateOrderStatusByAdmin(Long orderId, OrderStatus targetStatus) {
+        if (!OrderStatus.PROCESSING.equals(targetStatus) && !OrderStatus.COMPLETED.equals(targetStatus)) {
+            throw new IllegalArgumentException("Admin can only move paid orders to processing or processing orders to completed");
+        }
+
+        Order order = orderRepository.findDetailedById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order was not found"));
+
+        return changeStatus(order, targetStatus);
+    }
+
+    private OrderResponseDTO changeStatus(Order order, OrderStatus targetStatus) {
+        OrderStatus oldStatus = order.getStatus();
+        OrderState state = orderStateFactory.getState(oldStatus);
+        OrderStatus newStatus = state.transitionTo(targetStatus);
+
+        order.setStatus(newStatus);
         Order savedOrder = orderRepository.save(order);
+        orderEventPublisher.publishStatusChanged(savedOrder, oldStatus, newStatus);
 
         return OrderResponseDTO.fromEntity(savedOrder);
     }

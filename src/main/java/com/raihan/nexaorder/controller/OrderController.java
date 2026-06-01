@@ -3,6 +3,7 @@ package com.raihan.nexaorder.controller;
 import com.raihan.nexaorder.dto.CreateOrderRequestDTO;
 import com.raihan.nexaorder.dto.OrderResponseDTO;
 import com.raihan.nexaorder.dto.ProductResponseDTO;
+import com.raihan.nexaorder.enums.OrderStatus;
 import com.raihan.nexaorder.service.OrderService;
 import com.raihan.nexaorder.service.PaymentService;
 import com.raihan.nexaorder.service.ProductService;
@@ -123,6 +124,20 @@ public class OrderController {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
             return "redirect:/admin/orders";
         }
+    }
+
+    @PostMapping("/admin/orders/{id}/status")
+    public String updateOrderStatus(@PathVariable Long id,
+                                    @RequestParam OrderStatus status,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            orderService.updateOrderStatusByAdmin(id, status);
+            redirectAttributes.addFlashAttribute("successMessage", "Order status has been updated.");
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+        }
+
+        return "redirect:/admin/orders/" + id;
     }
 
     private void prepareCreateOrderModel(Model model, Long productId, CreateOrderRequestDTO request) {

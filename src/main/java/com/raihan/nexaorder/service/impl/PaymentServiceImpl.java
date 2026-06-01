@@ -3,10 +3,7 @@ package com.raihan.nexaorder.service.impl;
 import com.raihan.nexaorder.dto.PaymentRequestDTO;
 import com.raihan.nexaorder.dto.PaymentResponseDTO;
 import com.raihan.nexaorder.entity.Order;
-import com.raihan.nexaorder.entity.OrderItem;
 import com.raihan.nexaorder.entity.Payment;
-import com.raihan.nexaorder.entity.Product;
-import com.raihan.nexaorder.enums.InventoryChangeType;
 import com.raihan.nexaorder.enums.OrderStatus;
 import com.raihan.nexaorder.enums.PaymentMethod;
 import com.raihan.nexaorder.enums.PaymentStatus;
@@ -15,8 +12,7 @@ import com.raihan.nexaorder.pattern.payment.PaymentResult;
 import com.raihan.nexaorder.pattern.payment.PaymentStrategy;
 import com.raihan.nexaorder.repository.OrderRepository;
 import com.raihan.nexaorder.repository.PaymentRepository;
-import com.raihan.nexaorder.repository.ProductRepository;
-import com.raihan.nexaorder.service.InventoryService;
+import com.raihan.nexaorder.service.OrderService;
 import com.raihan.nexaorder.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,9 +28,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
-    private final InventoryService inventoryService;
     private final PaymentFactory paymentFactory;
+    private final OrderService orderService;
 
     @Override
     @Transactional(readOnly = true)
@@ -69,8 +64,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .paidAt(result.paidAt())
                 .build();
 
-        applyPaymentResult(order, result, "Payment " + strategy.getPaymentMethod() + " for order #" + order.getId());
         Payment savedPayment = paymentRepository.save(payment);
+        applyPaymentResult(order, result);
 
         return PaymentResponseDTO.fromEntity(savedPayment);
     }
@@ -96,13 +91,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setPaymentStatus(PaymentStatus.PAID);
         payment.setPaidAt(LocalDateTime.now());
-        applyPaymentResult(
-                order,
-                new PaymentResult(PaymentStatus.PAID, OrderStatus.PAID, payment.getPaidAt()),
-                "Bank transfer confirmed for order #" + order.getId()
-        );
-
         Payment savedPayment = paymentRepository.save(payment);
+        applyPaymentResult(order, new PaymentResult(PaymentStatus.PAID, OrderStatus.PAID, payment.getPaidAt()));
+
         return PaymentResponseDTO.fromEntity(savedPayment);
     }
 
@@ -148,46 +139,11 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private void applyPaymentResult(Order order, PaymentResult result, String inventoryDescription) {
+    private void applyPaymentResult(Order order, PaymentResult result) {
         if (!OrderStatus.PAID.equals(result.orderStatus())) {
             return;
         }
 
-        if (OrderStatus.PAID.equals(order.getStatus())) {
-            return;
-        }
-
-        validateStockForPaidOrder(order);
-        reduceStockForPaidOrder(order, inventoryDescription);
-        order.setStatus(OrderStatus.PAID);
-        orderRepository.save(order);
-    }
-
-    private void validateStockForPaidOrder(Order order) {
-        for (OrderItem item : order.getOrderItems()) {
-            Product product = item.getProduct();
-            int currentStock = product.getStock() == null ? 0 : product.getStock();
-
-            if (currentStock < item.getQuantity()) {
-                throw new IllegalArgumentException("Stock is no longer sufficient for " + product.getName());
-            }
-        }
-    }
-
-    private void reduceStockForPaidOrder(Order order, String inventoryDescription) {
-        for (OrderItem item : order.getOrderItems()) {
-            Product product = item.getProduct();
-            int currentStock = product.getStock() == null ? 0 : product.getStock();
-            int quantity = item.getQuantity();
-
-            product.setStock(currentStock - quantity);
-            productRepository.save(product);
-            inventoryService.createInventoryLog(
-                    product,
-                    InventoryChangeType.OUT,
-                    -quantity,
-                    inventoryDescription
-            );
-        }
+        orderService.markOrderAsPaid(order.getId());
     }
 }

@@ -84,4 +84,27 @@ document.addEventListener("DOMContentLoaded", function () {
         opacity: 0,
         ease: "power2.out"
     });
+
+    gsap.from("[data-animate='order-timeline'] > div", {
+        duration: 0.35,
+        x: -10,
+        opacity: 0,
+        stagger: 0.05,
+        ease: "power2.out"
+    });
+
+    gsap.from("[data-animate='notification-item']", {
+        duration: 0.4,
+        y: 14,
+        opacity: 0,
+        stagger: 0.05,
+        ease: "power2.out"
+    });
+
+    gsap.from("[data-animate='status-badge']", {
+        duration: 0.3,
+        scale: 0.96,
+        opacity: 0,
+        ease: "power2.out"
+    });
 });

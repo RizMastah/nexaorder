@@ -22,6 +22,19 @@
         <span th:text="${errorMessage}">Order error.</span>
     </div>
 
+    <div data-animate="order-summary" class="rounded-2xl border p-5"
+         th:classappend="${order.status.name() == 'PENDING'} ? ' border-amber-200 bg-amber-50 text-amber-800' :
+             (${order.status.name() == 'PAID'} ? ' border-emerald-200 bg-emerald-50 text-emerald-800' :
+             (${order.status.name() == 'PROCESSING'} ? ' border-sky-200 bg-sky-50 text-sky-800' :
+             (${order.status.name() == 'COMPLETED'} ? ' border-slate-200 bg-slate-50 text-slate-700' :
+             ' border-red-200 bg-red-50 text-red-700')))">
+        <p th:if="${order.status.name() == 'PENDING'}" class="text-sm font-semibold">This order is waiting for payment. You can still cancel it.</p>
+        <p th:if="${order.status.name() == 'PAID'}" class="text-sm font-semibold">Payment arrangement is confirmed. The order is ready for processing.</p>
+        <p th:if="${order.status.name() == 'PROCESSING'}" class="text-sm font-semibold">Your order is being processed.</p>
+        <p th:if="${order.status.name() == 'COMPLETED'}" class="text-sm font-semibold">Your order has been completed.</p>
+        <p th:if="${order.status.name() == 'CANCELLED'}" class="text-sm font-semibold">This order has been cancelled.</p>
+    </div>
+
     <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div data-animate="order-summary" class="nexa-card overflow-hidden">
             <div class="border-b border-slate-200 px-5 py-4">
@@ -122,22 +135,33 @@
 
             <div data-animate="order-summary" class="nexa-card p-6">
                 <h3 class="text-base font-semibold text-slate-950">Status Timeline</h3>
-                <div class="mt-5 space-y-4">
+                <div data-animate="order-timeline" class="mt-5 space-y-4">
                     <div class="flex items-center gap-3">
-                        <span class="h-3 w-3 rounded-full bg-emerald-600"></span>
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'CANCELLED'} ? ' bg-slate-300' : ' bg-emerald-600'"></span>
                         <span class="text-sm font-semibold text-slate-950">Pending</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="h-3 w-3 rounded-full bg-slate-300"></span>
-                        <span class="text-sm font-medium text-slate-500">Paid</span>
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'PAID' or order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' bg-emerald-600' : ' bg-slate-300'"></span>
+                        <span class="text-sm"
+                              th:classappend="${order.status.name() == 'PAID' or order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' font-semibold text-slate-950' : ' font-medium text-slate-500'">Paid</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="h-3 w-3 rounded-full bg-slate-300"></span>
-                        <span class="text-sm font-medium text-slate-500">Processing</span>
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' bg-emerald-600' : ' bg-slate-300'"></span>
+                        <span class="text-sm"
+                              th:classappend="${order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' font-semibold text-slate-950' : ' font-medium text-slate-500'">Processing</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="h-3 w-3 rounded-full bg-slate-300"></span>
-                        <span class="text-sm font-medium text-slate-500">Completed</span>
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'COMPLETED'} ? ' bg-emerald-600' : ' bg-slate-300'"></span>
+                        <span class="text-sm"
+                              th:classappend="${order.status.name() == 'COMPLETED'} ? ' font-semibold text-slate-950' : ' font-medium text-slate-500'">Completed</span>
+                    </div>
+                    <div th:if="${order.status.name() == 'CANCELLED'}" class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full bg-red-600"></span>
+                        <span class="text-sm font-semibold text-red-700">Cancelled</span>
                     </div>
                 </div>
             </div>

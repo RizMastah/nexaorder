@@ -15,6 +15,13 @@
         <span th:replace="~{fragments/status-badge :: statusBadge(${order.status.name()})}">PENDING</span>
     </div>
 
+    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+        <span th:text="${successMessage}">Order updated.</span>
+    </div>
+    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <span th:text="${errorMessage}">Order error.</span>
+    </div>
+
     <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div data-animate="order-summary" class="nexa-card overflow-hidden">
             <div class="border-b border-slate-200 px-5 py-4">
@@ -107,15 +114,32 @@
 
             <div data-animate="order-summary" class="nexa-card p-6">
                 <h3 class="text-base font-semibold text-slate-950">Status Update</h3>
-                <div class="mt-4 space-y-3">
-                    <select class="nexa-input" disabled>
-                        <option th:text="${order.status}">PENDING</option>
-                    </select>
-                    <button type="button"
-                            class="w-full cursor-not-allowed rounded-xl bg-slate-300 px-4 py-3 text-sm font-semibold text-slate-600"
-                            disabled>
-                        Update in Later Phase
+                <form th:if="${order.status.name() == 'PAID'}"
+                      th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                      method="post"
+                      class="mt-4">
+                    <input type="hidden" name="status" value="PROCESSING">
+                    <button type="submit" class="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                        Mark as Processing
                     </button>
+                </form>
+                <form th:if="${order.status.name() == 'PROCESSING'}"
+                      th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                      method="post"
+                      class="mt-4">
+                    <input type="hidden" name="status" value="COMPLETED">
+                    <button type="submit" class="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                        Mark as Completed
+                    </button>
+                </form>
+                <div th:if="${order.status.name() == 'PENDING'}" class="mt-4 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-800">
+                    Waiting for customer payment or bank transfer confirmation.
+                </div>
+                <div th:if="${order.status.name() == 'COMPLETED'}" class="mt-4 rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+                    This order is completed and cannot be changed.
+                </div>
+                <div th:if="${order.status.name() == 'CANCELLED'}" class="mt-4 rounded-xl bg-red-50 p-4 text-sm leading-6 text-red-700">
+                    This order is cancelled and cannot be changed.
                 </div>
             </div>
         </aside>

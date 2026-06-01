@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/customer-layout :: customerLayout('Notifications', ~{::section})}">
+<body>
+<section class="space-y-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Notifications</p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-950">My Notifications</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                Track updates for payment confirmation and order progress.
+            </p>
+        </div>
+        <span class="inline-flex w-fit rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800"
+              th:text="${unreadNotificationCount + ' unread'}">0 unread</span>
+    </div>
+
+    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+        <span th:text="${successMessage}">Notification updated.</span>
+    </div>
+    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <span th:text="${errorMessage}">Notification error.</span>
+    </div>
+
+    <div class="space-y-3">
+        <article th:each="notification : ${notifications}"
+                 data-animate="notification-item"
+                 class="nexa-card p-5">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full"
+                              th:classappend="${notification.read} ? ' bg-slate-300' : ' bg-emerald-500'"></span>
+                        <h3 class="text-sm font-semibold text-slate-950" th:text="${notification.title}">Notification</h3>
+                    </div>
+                    <p class="mt-2 text-sm leading-6 text-slate-600" th:text="${notification.message}">Message</p>
+                    <p class="mt-2 text-xs font-medium text-slate-400"
+                       th:text="${#temporals.format(notification.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</p>
+                </div>
+                <form th:if="${!notification.read}" th:action="@{/customer/notifications/{id}/read(id=${notification.id})}" method="post">
+                    <button type="submit" class="nexa-btn-secondary whitespace-nowrap py-2">Mark as read</button>
+                </form>
+            </div>
+        </article>
+    </div>
+
+    <div th:if="${#lists.isEmpty(notifications)}" class="nexa-card p-10 text-center">
+        <p class="text-sm font-medium text-slate-600">No notifications yet.</p>
+    </div>
+</section>
+</body>
+</html>

@@ -7,7 +7,9 @@
             @click="notificationsOpen = !notificationsOpen; profileOpen = false"
             aria-label="Notifications">
         <span class="text-base font-semibold">!</span>
-        <span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-emerald-500"></span>
+        <span th:if="${unreadNotificationCount > 0}"
+              class="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white"
+              th:text="${unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}">1</span>
     </button>
 
     <div x-cloak
@@ -17,10 +19,25 @@
          class="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <p class="text-sm font-semibold text-slate-950">Notifications</p>
-            <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">Preview</span>
+            <a th:href="${session.userRole == 'ADMIN'} ? @{/admin/notifications} : @{/customer/notifications}"
+               class="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600 transition hover:bg-slate-200">
+                View all
+            </a>
         </div>
-        <div class="py-4 text-sm text-slate-600">
-            No notification data is loaded yet.
+        <div th:if="${#lists.isEmpty(recentNotifications)}" class="py-4 text-sm text-slate-600">
+            No notifications yet.
+        </div>
+        <div th:if="${!#lists.isEmpty(recentNotifications)}" class="max-h-80 divide-y divide-slate-100 overflow-y-auto">
+            <article th:each="notification : ${recentNotifications}" class="py-3">
+                <div class="flex items-start gap-3">
+                    <span class="mt-1 h-2 w-2 rounded-full"
+                          th:classappend="${notification.read} ? ' bg-slate-300' : ' bg-emerald-500'"></span>
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-semibold text-slate-950" th:text="${notification.title}">Notification</p>
+                        <p class="mt-1 line-clamp-2 text-xs leading-5 text-slate-600" th:text="${notification.message}">Message</p>
+                    </div>
+                </div>
+            </article>
         </div>
     </div>
 </div>
