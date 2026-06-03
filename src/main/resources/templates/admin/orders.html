@@ -8,16 +8,36 @@
             <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Order Management</p>
             <h2 class="mt-2 text-2xl font-semibold text-slate-950">Orders</h2>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                Review all customer orders and inspect order details.
+                Review all customer orders, payment state, and operational status updates.
             </p>
         </div>
     </div>
 
+    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+        <span th:text="${successMessage}">Order updated.</span>
+    </div>
     <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
         <span th:text="${errorMessage}">Order error.</span>
     </div>
 
-    <div data-animate="order-list" class="nexa-card overflow-hidden">
+    <form th:action="@{/admin/orders}" method="get" class="nexa-card p-4">
+        <div class="grid gap-3 sm:grid-cols-[240px_auto_auto]">
+            <div>
+                <label for="status" class="sr-only">Status</label>
+                <select id="status" name="status" class="nexa-input">
+                    <option value="">All statuses</option>
+                    <option th:each="statusValue : ${orderStatuses}"
+                            th:value="${statusValue.name()}"
+                            th:selected="${selectedStatus == statusValue}"
+                            th:text="${statusValue}">PENDING</option>
+                </select>
+            </div>
+            <button type="submit" class="nexa-btn-primary px-5">Filter</button>
+            <a th:href="@{/admin/orders}" class="nexa-btn-secondary px-5">Reset</a>
+        </div>
+    </form>
+
+    <div class="nexa-card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
@@ -25,6 +45,7 @@
                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Order</th>
                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Customer</th>
                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Payment</th>
                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Total</th>
                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Created</th>
                     <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Action</th>
@@ -43,17 +64,41 @@
                     <td class="px-5 py-4">
                         <span th:replace="~{fragments/status-badge :: statusBadge(${order.status.name()})}">PENDING</span>
                     </td>
+                    <td class="px-5 py-4">
+                        <th:block th:if="${order.paymentStatus != null}">
+                            <span th:replace="~{fragments/payment-badge :: paymentBadge(${order.paymentStatus.name()})}">PENDING</span>
+                        </th:block>
+                        <span th:if="${order.paymentStatus == null}" class="text-sm font-medium text-slate-400">Not selected</span>
+                    </td>
                     <td class="px-5 py-4 text-sm font-semibold text-slate-950"
                         th:text="${'Rp ' + #numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</td>
                     <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-600"
                         th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</td>
-                    <td class="px-5 py-4 text-right">
-                        <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="nexa-btn-secondary py-2">Detail</a>
+                    <td class="px-5 py-4">
+                        <div class="flex justify-end gap-2">
+                            <form th:if="${order.status.name() == 'PAID'}"
+                                  th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                                  method="post">
+                                <input type="hidden" name="status" value="PROCESSING">
+                                <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                                    Process
+                                </button>
+                            </form>
+                            <form th:if="${order.status.name() == 'PROCESSING'}"
+                                  th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                                  method="post">
+                                <input type="hidden" name="status" value="COMPLETED">
+                                <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                                    Complete
+                                </button>
+                            </form>
+                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="nexa-btn-secondary py-2">Detail</a>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(orders)}">
-                    <td colspan="6" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
-                        No orders have been created yet.
+                    <td colspan="7" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                        No orders match the current filter.
                     </td>
                 </tr>
                 </tbody>

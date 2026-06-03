@@ -8,11 +8,14 @@ import com.raihan.nexaorder.entity.OrderItem;
 import com.raihan.nexaorder.entity.Product;
 import com.raihan.nexaorder.entity.User;
 import com.raihan.nexaorder.enums.OrderStatus;
+import com.raihan.nexaorder.enums.PaymentMethod;
+import com.raihan.nexaorder.enums.PaymentStatus;
 import com.raihan.nexaorder.pattern.observer.OrderEventPublisher;
 import com.raihan.nexaorder.pattern.state.OrderState;
 import com.raihan.nexaorder.pattern.state.OrderStateFactory;
 import com.raihan.nexaorder.repository.OrderItemRepository;
 import com.raihan.nexaorder.repository.OrderRepository;
+import com.raihan.nexaorder.repository.PaymentRepository;
 import com.raihan.nexaorder.repository.ProductRepository;
 import com.raihan.nexaorder.repository.UserRepository;
 import com.raihan.nexaorder.service.OrderService;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
     private final OrderStateFactory orderStateFactory;
     private final OrderEventPublisher orderEventPublisher;
 
@@ -108,6 +113,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponseDTO> getAllOrders(OrderStatus status) {
+        return getAllOrders()
+                .stream()
+                .filter(order -> status == null || status.equals(order.getStatus()))
+                .toList();
+    }
+
+    @Override
     @Transactional
     public OrderResponseDTO cancelOrder(Long orderId, Long userId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
@@ -150,8 +164,24 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(newStatus);
         Order savedOrder = orderRepository.save(order);
         orderEventPublisher.publishStatusChanged(savedOrder, oldStatus, newStatus);
+        completeCashOnDeliveryPayment(savedOrder, newStatus);
 
         return OrderResponseDTO.fromEntity(savedOrder);
+    }
+
+    private void completeCashOnDeliveryPayment(Order order, OrderStatus newStatus) {
+        if (!OrderStatus.COMPLETED.equals(newStatus)) {
+            return;
+        }
+
+        paymentRepository.findByOrderId(order.getId())
+                .filter(payment -> PaymentMethod.CASH_ON_DELIVERY.equals(payment.getPaymentMethod()))
+                .filter(payment -> PaymentStatus.PENDING.equals(payment.getPaymentStatus()))
+                .ifPresent(payment -> {
+                    payment.setPaymentStatus(PaymentStatus.PAID);
+                    payment.setPaidAt(LocalDateTime.now());
+                    paymentRepository.save(payment);
+                });
     }
 
     private int validateQuantity(Integer quantity) {

@@ -3,6 +3,7 @@ package com.raihan.nexaorder.controller;
 import com.raihan.nexaorder.dto.PaymentRequestDTO;
 import com.raihan.nexaorder.enums.PaymentMethod;
 import com.raihan.nexaorder.service.PaymentService;
+import com.raihan.nexaorder.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class PaymentController {
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
         try {
-            preparePaymentPage(model, orderId, currentUserId(session), new PaymentRequestDTO(PaymentMethod.EWALLET));
+            preparePaymentPage(model, orderId, SessionUtil.requireUserId(session), new PaymentRequestDTO(PaymentMethod.EWALLET));
             return "customer/payment";
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -42,7 +43,7 @@ public class PaymentController {
                                  Model model,
                                  HttpSession session,
                                  RedirectAttributes redirectAttributes) {
-        Long userId = currentUserId(session);
+        Long userId = SessionUtil.requireUserId(session);
 
         if (bindingResult.hasErrors()) {
             preparePaymentPage(model, orderId, userId, request);
@@ -82,14 +83,5 @@ public class PaymentController {
         model.addAttribute("paymentData", paymentService.getPaymentPageData(orderId, userId));
         model.addAttribute("paymentRequest", request);
         model.addAttribute("paymentMethods", PaymentMethod.values());
-    }
-
-    private Long currentUserId(HttpSession session) {
-        Object userId = session.getAttribute("userId");
-        if (userId instanceof Number number) {
-            return number.longValue();
-        }
-
-        throw new IllegalArgumentException("User session is invalid");
     }
 }

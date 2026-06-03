@@ -14,7 +14,7 @@
         <a th:href="@{/admin/products}" class="nexa-btn-secondary">Back to products</a>
     </div>
 
-    <form data-animate="product-form"
+    <form
           th:action="@{${formAction}}"
           th:object="${productRequest}"
           method="post"

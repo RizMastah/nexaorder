@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <header th:fragment="topbar(pageTitle)" class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-    <div class="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+    <div class="flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div class="flex min-w-0 items-center gap-3">
             <button type="button"
                     class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
@@ -15,26 +15,26 @@
                 </span>
             </button>
             <div class="min-w-0">
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Workspace</p>
-                <h1 class="truncate text-lg font-semibold text-slate-950" th:text="${pageTitle}">Dashboard</h1>
+                <p class="text-[0.68rem] font-bold uppercase tracking-[0.12em] text-slate-400">Workspace</p>
+                <h1 class="truncate text-base font-bold tracking-tight text-slate-950" th:text="${pageTitle}">Dashboard</h1>
             </div>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
             <div th:replace="~{fragments/notification-dropdown :: notificationDropdown}"></div>
 
             <div class="relative">
                 <button type="button"
-                        class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-left transition hover:bg-slate-50"
-                        @click="profileOpen = !profileOpen; notificationsOpen = false">
-                    <span class="hidden text-right sm:block">
-                        <span class="block max-w-32 truncate text-sm font-semibold text-slate-900"
-                              th:text="${session.userName ?: 'NexaOrder User'}">NexaOrder User</span>
-                        <span class="block text-xs font-medium text-slate-500"
-                              th:text="${session.userRole ?: 'USER'}">USER</span>
-                    </span>
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white"
-                          th:text="${session.userName != null ? #strings.substring(session.userName, 0, 1) : 'N'}">N</span>
+                        class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50"
+                        @click="profileOpen = !profileOpen; notificationsOpen = false"
+                        aria-label="Profile menu"
+                        th:title="${session.userName ?: 'NexaOrder User'}">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4.5 20a7.5 7.5 0 0 1 15 0"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </button>
 
                 <div x-cloak

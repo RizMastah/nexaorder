@@ -13,4 +13,6 @@ public interface InventoryLogRepository extends JpaRepository<InventoryLog, Long
 
     @EntityGraph(attributePaths = "product")
     List<InventoryLog> findByProductIdOrderByCreatedAtDesc(Long productId);
+
+    void deleteByProductId(Long productId);
 }

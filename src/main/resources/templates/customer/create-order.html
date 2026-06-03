@@ -3,7 +3,6 @@
       th:replace="~{layout/customer-layout :: customerLayout('Create Order', ~{::section})}">
 <body>
 <section class="space-y-6"
-         data-animate="order-summary"
          x-data="orderQuantity($el.dataset.stock, $el.dataset.price, $el.dataset.quantity)"
          th:data-stock="${product.stock}"
          th:data-price="${product.price}"

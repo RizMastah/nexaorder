@@ -1,6 +1,7 @@
 package com.raihan.nexaorder.controller;
 
 import com.raihan.nexaorder.service.NotificationService;
+import com.raihan.nexaorder.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -8,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -17,8 +19,10 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping("/admin/notifications")
-    public String adminNotifications(Model model, HttpSession session) {
-        model.addAttribute("notifications", notificationService.getNotifications(currentUserId(session)));
+    public String adminNotifications(@RequestParam(defaultValue = "all") String filter, Model model, HttpSession session) {
+        Long userId = SessionUtil.requireUserId(session);
+        model.addAttribute("notifications", notificationsForFilter(userId, filter));
+        model.addAttribute("selectedFilter", normalizeFilter(filter));
         return "admin/notifications";
     }
 
@@ -31,8 +35,10 @@ public class NotificationController {
     }
 
     @GetMapping("/customer/notifications")
-    public String customerNotifications(Model model, HttpSession session) {
-        model.addAttribute("notifications", notificationService.getNotifications(currentUserId(session)));
+    public String customerNotifications(@RequestParam(defaultValue = "all") String filter, Model model, HttpSession session) {
+        Long userId = SessionUtil.requireUserId(session);
+        model.addAttribute("notifications", notificationsForFilter(userId, filter));
+        model.addAttribute("selectedFilter", normalizeFilter(filter));
         return "customer/notifications";
     }
 
@@ -46,19 +52,22 @@ public class NotificationController {
 
     private void markAsRead(Long id, HttpSession session, RedirectAttributes redirectAttributes) {
         try {
-            notificationService.markAsRead(id, currentUserId(session));
+            notificationService.markAsRead(id, SessionUtil.requireUserId(session));
             redirectAttributes.addFlashAttribute("successMessage", "Notification marked as read.");
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
         }
     }
 
-    private Long currentUserId(HttpSession session) {
-        Object userId = session.getAttribute("userId");
-        if (userId instanceof Number number) {
-            return number.longValue();
+    private Object notificationsForFilter(Long userId, String filter) {
+        if ("unread".equals(normalizeFilter(filter))) {
+            return notificationService.getUnreadNotifications(userId);
         }
 
-        throw new IllegalArgumentException("User session is invalid");
+        return notificationService.getNotifications(userId);
+    }
+
+    private String normalizeFilter(String filter) {
+        return "unread".equalsIgnoreCase(filter) ? "unread" : "all";
     }
 }

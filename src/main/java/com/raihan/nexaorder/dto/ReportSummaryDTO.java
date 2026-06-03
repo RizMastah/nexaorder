@@ -32,6 +32,8 @@ public class ReportSummaryDTO {
     private List<Long> bestSellingProductQuantities;
     private List<String> salesSummaryLabels;
     private List<BigDecimal> salesSummaryValues;
+    private String selectedMonth;
+    private String periodLabel;
 
     @Getter
     @Setter

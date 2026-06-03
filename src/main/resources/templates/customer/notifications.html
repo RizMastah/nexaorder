@@ -8,11 +8,24 @@
             <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Notifications</p>
             <h2 class="mt-2 text-2xl font-semibold text-slate-950">My Notifications</h2>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                Track updates for payment confirmation and order progress.
+                Track payment, order status, and invoice updates from NexaOrder.
             </p>
         </div>
         <span class="inline-flex w-fit rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800"
               th:text="${unreadNotificationCount + ' unread'}">0 unread</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+        <a th:href="@{/customer/notifications(filter='all')}"
+           class="rounded-xl px-4 py-2 text-sm font-semibold transition"
+           th:classappend="${selectedFilter == 'all'} ? ' bg-emerald-600 text-white' : ' border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'">
+            All
+        </a>
+        <a th:href="@{/customer/notifications(filter='unread')}"
+           class="rounded-xl px-4 py-2 text-sm font-semibold transition"
+           th:classappend="${selectedFilter == 'unread'} ? ' bg-emerald-600 text-white' : ' border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'">
+            Unread
+        </a>
     </div>
 
     <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
@@ -23,9 +36,7 @@
     </div>
 
     <div class="space-y-3">
-        <article th:each="notification : ${notifications}"
-                 data-animate="notification-item"
-                 class="nexa-card p-5">
+        <article th:each="notification : ${notifications}" class="nexa-card p-5">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0">
                     <div class="flex items-center gap-2">
@@ -45,7 +56,7 @@
     </div>
 
     <div th:if="${#lists.isEmpty(notifications)}" class="nexa-card p-10 text-center">
-        <p class="text-sm font-medium text-slate-600">No notifications yet.</p>
+        <p class="text-sm font-medium text-slate-600">No notifications match the current filter.</p>
     </div>
 </section>
 </body>

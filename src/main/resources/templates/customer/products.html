@@ -40,7 +40,7 @@
     </form>
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        <article th:each="product : ${products}" data-animate="product-card" class="nexa-card overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
+            <article th:each="product : ${products}" class="nexa-card overflow-hidden transition hover:shadow-md">
             <div class="relative h-48 bg-slate-100">
                 <img th:if="${product.imageUrl != null and product.imageUrl != ''}"
                      th:src="@{${product.imageUrl}}"

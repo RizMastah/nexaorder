@@ -98,8 +98,10 @@ public class ProductController {
         try {
             productService.deleteProduct(id);
             redirectAttributes.addFlashAttribute("successMessage", "Product has been deleted.");
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
         } catch (RuntimeException exception) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Product could not be deleted.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Product could not be deleted. Check whether it is already used in orders.");
         }
 
         return "redirect:/admin/products";

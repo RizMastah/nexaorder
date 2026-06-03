@@ -8,6 +8,7 @@ import com.raihan.nexaorder.service.InvoiceService;
 import com.raihan.nexaorder.service.OrderService;
 import com.raihan.nexaorder.service.PaymentService;
 import com.raihan.nexaorder.service.ProductService;
+import com.raihan.nexaorder.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,7 @@ public class OrderController {
         }
 
         try {
-            Long userId = currentUserId(session);
+            Long userId = SessionUtil.requireUserId(session);
             OrderResponseDTO order = orderService.createOrder(userId, request);
             redirectAttributes.addFlashAttribute("successMessage", "Order has been created.");
             return "redirect:/customer/orders/" + order.getId();
@@ -75,7 +76,7 @@ public class OrderController {
 
     @GetMapping("/customer/orders")
     public String customerOrders(Model model, HttpSession session) {
-        model.addAttribute("orders", orderService.getOrdersByUserId(currentUserId(session)));
+        model.addAttribute("orders", orderService.getOrdersByUserId(SessionUtil.requireUserId(session)));
         return "customer/orders";
     }
 
@@ -85,7 +86,7 @@ public class OrderController {
                                       HttpSession session,
                                       RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("order", orderService.getOrderByIdForUser(id, currentUserId(session)));
+            model.addAttribute("order", orderService.getOrderByIdForUser(id, SessionUtil.requireUserId(session)));
             model.addAttribute("payment", paymentService.findPaymentByOrderId(id).orElse(null));
             model.addAttribute("invoice", invoiceService.findInvoiceByOrderId(id).orElse(null));
             return "customer/order-detail";
@@ -100,7 +101,7 @@ public class OrderController {
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
         try {
-            orderService.cancelOrder(id, currentUserId(session));
+            orderService.cancelOrder(id, SessionUtil.requireUserId(session));
             redirectAttributes.addFlashAttribute("successMessage", "Order has been cancelled.");
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -110,8 +111,10 @@ public class OrderController {
     }
 
     @GetMapping("/admin/orders")
-    public String adminOrders(Model model) {
-        model.addAttribute("orders", orderService.getAllOrders());
+    public String adminOrders(@RequestParam(required = false) OrderStatus status, Model model) {
+        model.addAttribute("orders", orderService.getAllOrders(status));
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("orderStatuses", OrderStatus.values());
         return "admin/orders";
     }
 
@@ -148,14 +151,5 @@ public class OrderController {
         ProductResponseDTO product = productService.getProductById(productId);
         model.addAttribute("product", product);
         model.addAttribute("orderRequest", request);
-    }
-
-    private Long currentUserId(HttpSession session) {
-        Object userId = session.getAttribute("userId");
-        if (userId instanceof Number number) {
-            return number.longValue();
-        }
-
-        throw new IllegalArgumentException("User session is invalid");
     }
 }

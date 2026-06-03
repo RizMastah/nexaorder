@@ -23,7 +23,7 @@
     </div>
 
     <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div data-animate="order-summary" class="nexa-card overflow-hidden">
+        <div class="nexa-card overflow-hidden">
             <div class="border-b border-slate-200 px-5 py-4">
                 <h3 class="text-base font-semibold text-slate-950">Order Items</h3>
             </div>
@@ -66,7 +66,7 @@
         </div>
 
         <aside class="space-y-4">
-            <div data-animate="order-summary" class="nexa-card p-6">
+            <div class="nexa-card p-6">
                 <h3 class="text-base font-semibold text-slate-950">Customer</h3>
                 <div class="mt-5 rounded-xl bg-slate-50 p-4">
                     <p class="text-sm font-semibold text-slate-950" th:text="${order.customerName}">Customer</p>
@@ -85,7 +85,7 @@
                 </div>
             </div>
 
-            <div data-animate="order-summary" class="nexa-card p-6">
+            <div class="nexa-card p-6">
                 <h3 class="text-base font-semibold text-slate-950">Payment</h3>
                 <div th:if="${payment != null}" class="mt-5 space-y-4 text-sm">
                     <div class="flex items-center justify-between">
@@ -120,7 +120,40 @@
                 </a>
             </div>
 
-            <div data-animate="order-summary" class="nexa-card p-6">
+            <div class="nexa-card p-6">
+                <h3 class="text-base font-semibold text-slate-950">Status Timeline</h3>
+                <div class="mt-5 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'CANCELLED'} ? ' bg-slate-300' : ' bg-emerald-600'"></span>
+                        <span class="text-sm font-semibold text-slate-950">Pending</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'PAID' or order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' bg-emerald-600' : ' bg-slate-300'"></span>
+                        <span class="text-sm"
+                              th:classappend="${order.status.name() == 'PAID' or order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' font-semibold text-slate-950' : ' font-medium text-slate-500'">Paid</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' bg-emerald-600' : ' bg-slate-300'"></span>
+                        <span class="text-sm"
+                              th:classappend="${order.status.name() == 'PROCESSING' or order.status.name() == 'COMPLETED'} ? ' font-semibold text-slate-950' : ' font-medium text-slate-500'">Processing</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full"
+                              th:classappend="${order.status.name() == 'COMPLETED'} ? ' bg-emerald-600' : ' bg-slate-300'"></span>
+                        <span class="text-sm"
+                              th:classappend="${order.status.name() == 'COMPLETED'} ? ' font-semibold text-slate-950' : ' font-medium text-slate-500'">Completed</span>
+                    </div>
+                    <div th:if="${order.status.name() == 'CANCELLED'}" class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full bg-red-600"></span>
+                        <span class="text-sm font-semibold text-red-700">Cancelled</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nexa-card p-6">
                 <h3 class="text-base font-semibold text-slate-950">Status Update</h3>
                 <form th:if="${order.status.name() == 'PAID'}"
                       th:action="@{/admin/orders/{id}/status(id=${order.id})}"

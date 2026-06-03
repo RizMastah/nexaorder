@@ -18,6 +18,8 @@ public interface OrderService {
 
     List<OrderResponseDTO> getAllOrders();
 
+    List<OrderResponseDTO> getAllOrders(OrderStatus status);
+
     OrderResponseDTO cancelOrder(Long orderId, Long userId);
 
     OrderResponseDTO markOrderAsPaid(Long orderId);

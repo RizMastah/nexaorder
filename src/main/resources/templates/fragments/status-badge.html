@@ -2,7 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <span th:fragment="statusBadge(status)"
-      data-animate="status-badge"
       class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
       th:classappend="${status == 'PENDING'} ? ' bg-amber-100 text-amber-800' :
         (${status == 'PAID'} ? ' bg-emerald-100 text-emerald-800' :

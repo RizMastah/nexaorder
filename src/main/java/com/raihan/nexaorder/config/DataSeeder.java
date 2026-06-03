@@ -34,7 +34,7 @@ public class DataSeeder {
             String customerEmail = "customer@nexaorder.com";
             if (!userRepository.existsByEmail(customerEmail)) {
                 User customer = User.builder()
-                        .name("NexaOrder Customer")
+                        .name("Ariel Hikmat")
                         .email(customerEmail)
                         .password("customer123")
                         .role(UserRole.CUSTOMER)

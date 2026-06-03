@@ -27,6 +27,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<NotificationResponseDTO> getUnreadNotifications(Long userId) {
+        return notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(NotificationResponseDTO::fromEntity)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<NotificationResponseDTO> getRecentNotifications(Long userId) {
         return notificationRepository.findTop5ByUserIdOrderByCreatedAtDesc(userId)
                 .stream()

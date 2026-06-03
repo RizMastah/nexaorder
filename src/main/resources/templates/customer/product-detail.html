@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <div data-animate="product-form" class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <img th:if="${product.imageUrl != null and product.imageUrl != ''}"
                  th:src="@{${product.imageUrl}}"

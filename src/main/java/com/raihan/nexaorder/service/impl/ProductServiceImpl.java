@@ -4,6 +4,8 @@ import com.raihan.nexaorder.dto.ProductRequestDTO;
 import com.raihan.nexaorder.dto.ProductResponseDTO;
 import com.raihan.nexaorder.entity.Product;
 import com.raihan.nexaorder.enums.InventoryChangeType;
+import com.raihan.nexaorder.repository.InventoryLogRepository;
+import com.raihan.nexaorder.repository.OrderItemRepository;
 import com.raihan.nexaorder.repository.ProductRepository;
 import com.raihan.nexaorder.service.InventoryService;
 import com.raihan.nexaorder.service.ProductService;
@@ -38,6 +40,8 @@ public class ProductServiceImpl implements ProductService {
     );
 
     private final ProductRepository productRepository;
+    private final InventoryLogRepository inventoryLogRepository;
+    private final OrderItemRepository orderItemRepository;
     private final InventoryService inventoryService;
 
     @Override
@@ -113,6 +117,11 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         Product product = findProductOrThrow(id);
+        if (orderItemRepository.existsByProductId(id)) {
+            throw new IllegalArgumentException("Product cannot be deleted because it is already used in orders");
+        }
+
+        inventoryLogRepository.deleteByProductId(id);
         productRepository.delete(product);
     }
 

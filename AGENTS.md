@@ -30,7 +30,6 @@ The website should feel like a modern small-business order management dashboard,
 - Tailwind CSS
 - Flowbite
 - Alpine.js
-- GSAP
 - Chart.js
 
 ### Authentication
@@ -380,6 +379,14 @@ Spring `@Service`, `@Component`, and `@Repository` beans are singleton by defaul
 
 NexaOrder must look like a modern business dashboard.
 
+Important updated decision:
+
+```text
+The frontend should avoid decorative animations.
+GSAP should not be used.
+The UI should be clean, fast, stable, and practical.
+```
+
 Design keywords:
 
 ```text
@@ -424,7 +431,6 @@ Use CDN for development and demo:
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 ```
 
@@ -470,15 +476,6 @@ Use for lightweight UI interactivity:
 - Filter state
 - Mark notification as read UI behavior
 
-### GSAP
-Use for subtle premium animation:
-- Login card entrance
-- Dashboard card stagger reveal
-- Product card entrance
-- Order status timeline reveal
-- Toast notification slide-in
-- Report chart container reveal
-- Modal entrance
 
 ### Chart.js
 Use for:
@@ -488,34 +485,40 @@ Use for:
 
 ---
 
-## 9.4 Animation Policy
+## 9.4 Animation and Interaction Policy
 
-Animations must be subtle and useful.
+NexaOrder is a practical business dashboard, not a landing page or visual showcase. Avoid decorative page-load animations because they can make the application feel generic or AI-generated.
 
-Recommended values:
+### Main Rule
 
 ```text
-Duration: 0.3s - 0.7s
-Movement: 10px - 30px
-Stagger: 0.05s - 0.1s
-Ease: smooth and natural
+Do not use GSAP.
+Do not use page-load fade-in animations.
+Do not use stagger animations for dashboard cards, product cards, charts, or tables.
+All important content should be visible immediately when the page loads.
 ```
 
-Allowed animation types:
+### Allowed Micro-Interactions
+
+Use only functional and lightweight interactions:
 
 ```text
-fade in
-slide up
-slide from side
-scale in
-stagger cards
-timeline reveal
-toast slide
+Tailwind hover transitions
+Flowbite modal/dropdown behavior
+Alpine.js x-transition for dropdowns and modals
+Simple toast/alert display for user feedback
+Chart.js default chart rendering
 ```
 
-Avoid:
+### Avoid
 
 ```text
+page content fade-in on load
+dashboard card stagger reveal
+product card stagger reveal
+chart container reveal
+auth card entrance animation
+order timeline reveal animation
 bounce-heavy animation
 spin animation
 glitch effect
@@ -525,20 +528,19 @@ large movement
 too many animations on one page
 ```
 
-Do not use GSAP for every hover or every simple UI state. Use Tailwind transitions for normal hover effects.
+### UI Feeling
+
+The interface should feel fast, stable, and professional. Prioritize clarity, spacing, readable tables, clear status badges, and smooth form interactions over decorative motion.
 
 ---
 
-## 9.5 Where to Use Alpine.js and GSAP
+## 9.5 Where to Use Alpine.js and Minimal Transitions
 
 ### Login / Register Page
 Alpine.js:
 - Show/hide password
 - Close error alert
 
-GSAP:
-- Logo/title entrance
-- Login/register card fade-in and slide-up
 
 ### Admin Dashboard
 Alpine.js:
@@ -546,11 +548,6 @@ Alpine.js:
 - Profile dropdown
 - Notification dropdown
 
-GSAP:
-- Summary cards stagger reveal
-- Chart cards fade-in
-- Recent orders table fade-in
-- Low-stock alert slide-in
 
 ### Sidebar / Navbar
 Alpine.js:
@@ -558,8 +555,6 @@ Alpine.js:
 - Dropdown state
 - Collapsible menu if needed
 
-GSAP:
-- Optional sidebar entrance on first load only
 
 ### Product Management
 Alpine.js:
@@ -568,10 +563,6 @@ Alpine.js:
 - Category filter state
 - Search UI state
 
-GSAP:
-- Product table fade-in
-- Product cards stagger
-- Modal entrance
 
 ### Customer Product List
 Alpine.js:
@@ -580,9 +571,6 @@ Alpine.js:
 - Quantity selector
 - Product quick-view modal
 
-GSAP:
-- Product cards stagger reveal
-- Add-to-order toast
 
 ### Create Order Page
 Alpine.js:
@@ -591,9 +579,6 @@ Alpine.js:
 - Selected product state
 - Disable submit if quantity invalid
 
-GSAP:
-- Order summary card reveal
-- Stock warning slide-in
 
 ### Payment Page
 Alpine.js:
@@ -601,10 +586,6 @@ Alpine.js:
 - Show/hide payment instructions
 - Confirm payment panel
 
-GSAP:
-- Payment method cards reveal
-- Instruction panel fade-in
-- Payment success animation
 
 ### Order Detail Page
 Alpine.js:
@@ -612,9 +593,6 @@ Alpine.js:
 - Cancel confirmation modal
 - Show/hide invoice preview
 
-GSAP:
-- Order status timeline reveal
-- Current status badge highlight
 
 ### Notification Page / Dropdown
 Alpine.js:
@@ -622,27 +600,18 @@ Alpine.js:
 - Filter all/unread
 - Mark as read UI state
 
-GSAP:
-- Toast notification slide-in
-- New notification pulse
 
 ### Report Dashboard
 Alpine.js:
 - Date/month filter
 - Export button loading state
 
-GSAP:
-- Summary cards reveal
-- Chart containers reveal
-- Report table fade-in
 
 ### Invoice Page
 Alpine.js:
 - Print button
 - Toggle invoice detail if needed
 
-GSAP:
-- Very light invoice card fade-in only
 
 ---
 
@@ -674,7 +643,6 @@ Create static assets:
 ```text
 src/main/resources/static/css/app.css
 src/main/resources/static/js/app.js
-src/main/resources/static/js/animations.js
 src/main/resources/static/js/charts.js
 src/main/resources/static/uploads/products
 ```
@@ -896,7 +864,7 @@ Before considering any page finished, check:
 - Is mobile layout acceptable?
 - Does the page have enough whitespace?
 - Does the page avoid unnecessary decoration?
-- Are animations subtle?
+- Are interactions subtle and functional?
 - Does the page look like a real business dashboard?
 
 ---
@@ -946,7 +914,7 @@ Power Bank
 - Add dependencies
 - Configure MySQL
 - Create first Thymeleaf page
-- Add Tailwind + Flowbite + Alpine.js + GSAP + Chart.js via CDN
+- Add Tailwind + Flowbite + Alpine.js + Chart.js via CDN
 
 ### Phase 2 — Core Backend
 - Create enums
@@ -968,7 +936,7 @@ Power Bank
 - Build sidebar
 - Build topbar
 - Build status badge fragments
-- Build base animation file
+- Build base interaction file
 
 ### Phase 5 — Product and Inventory
 - Product CRUD
@@ -1006,7 +974,7 @@ Power Bank
 ### Phase 10 — Polish and Demo
 - Add dummy data
 - Improve UI consistency
-- Add GSAP subtle animations
+- Keep transitions minimal and functional
 - Fix bugs
 - Take screenshots
 - Export SQL file

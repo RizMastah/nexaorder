@@ -13,7 +13,7 @@
         <button type="button" class="nexa-btn-primary" onclick="window.print()">Print Invoice</button>
     </div>
 
-    <article data-animate="invoice-card" class="nexa-card mx-auto max-w-5xl p-6 sm:p-8">
+    <article class="nexa-card mx-auto max-w-5xl p-6 sm:p-8">
         <div class="flex flex-col gap-6 border-b border-slate-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <div class="flex items-center gap-3">
@@ -59,7 +59,9 @@
                 <div>
                     <p class="text-sm font-semibold text-slate-500">Payment Status</p>
                     <div class="mt-1">
-                        <span th:if="${invoice.paymentStatus != null}" th:replace="~{fragments/payment-badge :: paymentBadge(${invoice.paymentStatus.name()})}">PAID</span>
+                        <th:block th:if="${invoice.paymentStatus != null}">
+                            <span th:replace="~{fragments/payment-badge :: paymentBadge(${invoice.paymentStatus.name()})}">PAID</span>
+                        </th:block>
                         <span th:if="${invoice.paymentStatus == null}" class="text-sm font-medium text-slate-500">Not selected</span>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 package com.raihan.nexaorder.controller;
 
 import com.raihan.nexaorder.service.InvoiceService;
+import com.raihan.nexaorder.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,7 @@ public class InvoiceController {
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("invoice", invoiceService.getInvoiceByOrderIdForUser(orderId, currentUserId(session)));
+            model.addAttribute("invoice", invoiceService.getInvoiceByOrderIdForUser(orderId, SessionUtil.requireUserId(session)));
             return "customer/invoice";
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -40,14 +41,5 @@ public class InvoiceController {
             redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
             return "redirect:/admin/orders";
         }
-    }
-
-    private Long currentUserId(HttpSession session) {
-        Object userId = session.getAttribute("userId");
-        if (userId instanceof Number number) {
-            return number.longValue();
-        }
-
-        throw new IllegalArgumentException("User session is invalid");
     }
 }

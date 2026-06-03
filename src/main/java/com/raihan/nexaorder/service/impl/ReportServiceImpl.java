@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -35,7 +36,13 @@ public class ReportServiceImpl implements ReportService {
     @Override
     @Transactional(readOnly = true)
     public ReportSummaryDTO getReportSummary() {
-        List<Order> orders = orderRepository.findAllDetailedByOrderByCreatedAtDesc();
+        return getReportSummary(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReportSummaryDTO getReportSummary(YearMonth month) {
+        List<Order> orders = filterOrdersByMonth(orderRepository.findAllDetailedByOrderByCreatedAtDesc(), month);
         Map<OrderStatus, Long> statusCounts = countStatuses(orders);
         List<Order> revenueOrders = revenueOrders(orders);
         BigDecimal totalSales = revenueOrders.stream()
@@ -62,18 +69,27 @@ public class ReportServiceImpl implements ReportService {
                 .orderStatusCounts(statusLabels().stream().map(label -> statusCounts.get(OrderStatus.valueOf(label))).toList())
                 .bestSellingProductLabels(bestSellingProducts.stream().map(ReportSummaryDTO.BestSellingProductDTO::getProductName).toList())
                 .bestSellingProductQuantities(bestSellingProducts.stream().map(ReportSummaryDTO.BestSellingProductDTO::getQuantitySold).toList())
-                .salesSummaryLabels(salesSummaryLabels())
-                .salesSummaryValues(salesSummaryValues(revenueOrders))
+                .salesSummaryLabels(salesSummaryLabels(month))
+                .salesSummaryValues(salesSummaryValues(revenueOrders, month))
+                .selectedMonth(month == null ? "" : month.toString())
+                .periodLabel(month == null ? "All orders" : month.format(DateTimeFormatter.ofPattern("MMMM yyyy")))
                 .build();
     }
 
     @Override
     @Transactional(readOnly = true)
     public String exportReportCsv() {
-        ReportSummaryDTO report = getReportSummary();
+        return exportReportCsv(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String exportReportCsv(YearMonth month) {
+        ReportSummaryDTO report = getReportSummary(month);
         StringBuilder csv = new StringBuilder();
 
         csv.append("NexaOrder Report\n");
+        csv.append("Period,").append(csvValue(report.getPeriodLabel())).append("\n");
         csv.append("Metric,Value\n");
         csv.append("Total Orders,").append(report.getTotalOrders()).append("\n");
         csv.append("Total Sales,").append(report.getTotalSales()).append("\n");
@@ -104,6 +120,16 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return csv.toString();
+    }
+
+    private List<Order> filterOrdersByMonth(List<Order> orders, YearMonth month) {
+        if (month == null) {
+            return orders;
+        }
+
+        return orders.stream()
+                .filter(order -> order.getCreatedAt() != null && YearMonth.from(order.getCreatedAt()).equals(month))
+                .toList();
     }
 
     private Map<OrderStatus, Long> countStatuses(List<Order> orders) {
@@ -157,19 +183,33 @@ public class ReportServiceImpl implements ReportService {
         );
     }
 
-    private List<String> salesSummaryLabels() {
+    private List<String> salesSummaryLabels(YearMonth month) {
+        if (month != null) {
+            LocalDate startDate = month.atDay(1);
+            return startDate.datesUntil(month.atEndOfMonth().plusDays(1))
+                    .map(date -> date.format(SALES_LABEL_FORMATTER))
+                    .toList();
+        }
+
         LocalDate startDate = LocalDate.now().minusDays(6);
         return startDate.datesUntil(LocalDate.now().plusDays(1))
                 .map(date -> date.format(SALES_LABEL_FORMATTER))
                 .toList();
     }
 
-    private List<BigDecimal> salesSummaryValues(List<Order> orders) {
+    private List<BigDecimal> salesSummaryValues(List<Order> orders, YearMonth month) {
         Map<LocalDate, BigDecimal> salesByDate = orders.stream()
                 .collect(Collectors.groupingBy(
                         order -> order.getCreatedAt().toLocalDate(),
                         Collectors.mapping(Order::getTotalPrice, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
                 ));
+
+        if (month != null) {
+            LocalDate startDate = month.atDay(1);
+            return startDate.datesUntil(month.atEndOfMonth().plusDays(1))
+                    .map(date -> salesByDate.getOrDefault(date, BigDecimal.ZERO))
+                    .toList();
+        }
 
         LocalDate startDate = LocalDate.now().minusDays(6);
         return startDate.datesUntil(LocalDate.now().plusDays(1))
