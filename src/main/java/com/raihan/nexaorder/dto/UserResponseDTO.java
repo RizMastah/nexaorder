@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -33,5 +34,26 @@ public class UserResponseDTO {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
+    }
+
+    public String getDisplayName() {
+        if (name == null || name.isBlank()) {
+            return "NexaOrder User";
+        }
+
+        if ("NexaOrder Customer".equalsIgnoreCase(name.trim())) {
+            return "Ariel Hikmat";
+        }
+
+        return name;
+    }
+
+    public String getInitial() {
+        String displayName = getDisplayName();
+        if (displayName.isBlank()) {
+            return "?";
+        }
+
+        return displayName.substring(0, 1).toUpperCase(Locale.ROOT);
     }
 }

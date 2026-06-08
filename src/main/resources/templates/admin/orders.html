@@ -2,29 +2,29 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-layout :: adminLayout('Orders', ~{::section})}">
 <body>
-<section class="space-y-6">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+<section class="nexa-admin-page space-y-5">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Order Management</p>
-            <h2 class="mt-2 text-2xl font-semibold text-slate-950">Orders</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            <p class="nexa-section-label">Order Management</p>
+            <h2 class="nexa-admin-title">Orders</h2>
+            <p class="nexa-admin-description">
                 Review all customer orders, payment state, and operational status updates.
             </p>
         </div>
     </div>
 
-    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+    <div th:if="${successMessage}" class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
         <span th:text="${successMessage}">Order updated.</span>
     </div>
-    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+    <div th:if="${errorMessage}" class="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
         <span th:text="${errorMessage}">Order error.</span>
     </div>
 
-    <form th:action="@{/admin/orders}" method="get" class="nexa-card p-4">
+    <form th:action="@{/admin/orders}" method="get" class="nexa-admin-subtle-surface p-3.5">
         <div class="grid gap-3 sm:grid-cols-[240px_auto_auto]">
             <div>
                 <label for="status" class="sr-only">Status</label>
-                <select id="status" name="status" class="nexa-input">
+                <select id="status" name="status" class="nexa-admin-input">
                     <option value="">All statuses</option>
                     <option th:each="statusValue : ${orderStatuses}"
                             th:value="${statusValue.name()}"
@@ -32,55 +32,64 @@
                             th:text="${statusValue}">PENDING</option>
                 </select>
             </div>
-            <button type="submit" class="nexa-btn-primary px-5">Filter</button>
-            <a th:href="@{/admin/orders}" class="nexa-btn-secondary px-5">Reset</a>
+            <button type="submit" class="nexa-accent-button">Filter</button>
+            <a th:href="@{/admin/orders}" class="nexa-btn-secondary">Reset</a>
         </div>
     </form>
 
-    <div class="nexa-card overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50">
+    <section class="nexa-admin-surface overflow-hidden">
+        <div class="flex flex-col gap-3 border-b border-slate-100 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Order Directory</p>
+                <h3 class="mt-1 text-base font-bold tracking-tight text-slate-950">Customer orders</h3>
+            </div>
+            <p class="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200"
+               th:text="${#lists.size(orders) + ' orders'}">0 orders</p>
+        </div>
+
+        <div class="hidden overflow-x-auto md:block">
+            <table class="nexa-admin-table">
+                <thead>
                 <tr>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Order</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Customer</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Payment</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Total</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Created</th>
-                    <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Action</th>
+                    <th scope="col">Order</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Payment</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Created</th>
+                    <th scope="col" class="text-right">Action</th>
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
-                <tr th:each="order : ${orders}" class="transition hover:bg-slate-50">
-                    <td class="px-5 py-4">
-                        <p class="text-sm font-semibold text-slate-950" th:text="${'Order #' + order.id}">Order #1</p>
-                        <p class="mt-1 text-xs text-slate-500" th:text="${#lists.size(order.items) + ' item(s)'}">1 item</p>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td>
+                        <p class="text-sm font-bold text-slate-950" th:text="${'#' + order.id}">#1</p>
+                        <p class="mt-0.5 text-xs text-slate-500" th:text="${#lists.size(order.items) + ' item(s)'}">1 item</p>
                     </td>
-                    <td class="px-5 py-4">
-                        <p class="text-sm font-semibold text-slate-950" th:text="${order.customerName}">Customer</p>
-                        <p class="mt-1 text-xs text-slate-500" th:text="${order.customerEmail}">customer@example.com</p>
+                    <td>
+                        <p class="text-sm font-bold text-slate-950" th:text="${order.displayCustomerName}">Customer</p>
+                        <p class="mt-0.5 text-xs text-slate-500" th:text="${order.customerEmail}">customer@example.com</p>
                     </td>
-                    <td class="px-5 py-4">
+                    <td>
                         <span th:replace="~{fragments/status-badge :: statusBadge(${order.status.name()})}">PENDING</span>
                     </td>
-                    <td class="px-5 py-4">
+                    <td>
                         <th:block th:if="${order.paymentStatus != null}">
                             <span th:replace="~{fragments/payment-badge :: paymentBadge(${order.paymentStatus.name()})}">PENDING</span>
                         </th:block>
                         <span th:if="${order.paymentStatus == null}" class="text-sm font-medium text-slate-400">Not selected</span>
                     </td>
-                    <td class="px-5 py-4 text-sm font-semibold text-slate-950"
+                    <td class="font-bold text-slate-950"
                         th:text="${'Rp ' + #numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</td>
-                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-600"
+                    <td class="whitespace-nowrap"
                         th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</td>
-                    <td class="px-5 py-4">
+                    <td>
                         <div class="flex justify-end gap-2">
                             <form th:if="${order.status.name() == 'PAID'}"
                                   th:action="@{/admin/orders/{id}/status(id=${order.id})}"
                                   method="post">
                                 <input type="hidden" name="status" value="PROCESSING">
-                                <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                                <button type="submit" class="inline-flex h-8 items-center justify-center rounded-xl bg-teal-700 px-3 text-sm font-semibold text-white transition hover:bg-teal-800">
                                     Process
                                 </button>
                             </form>
@@ -88,23 +97,94 @@
                                   th:action="@{/admin/orders/{id}/status(id=${order.id})}"
                                   method="post">
                                 <input type="hidden" name="status" value="COMPLETED">
-                                <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                                <button type="submit" class="inline-flex h-8 items-center justify-center rounded-xl bg-teal-700 px-3 text-sm font-semibold text-white transition hover:bg-teal-800">
                                     Complete
                                 </button>
                             </form>
-                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="nexa-btn-secondary py-2">Detail</a>
+                            <a th:href="@{/admin/orders/{id}(id=${order.id})}"
+                               class="inline-flex h-8 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                                Detail
+                            </a>
                         </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(orders)}">
-                    <td colspan="7" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                    <td colspan="7" class="py-10 text-center text-sm font-medium text-slate-500">
                         No orders match the current filter.
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+
+        <div class="divide-y divide-slate-100 md:hidden">
+            <article th:each="order : ${orders}" class="space-y-4 p-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-base font-bold text-slate-950" th:text="${'#' + order.id}">#1</p>
+                        <p class="mt-1 text-xs font-semibold text-slate-500" th:text="${#lists.size(order.items) + ' item(s)'}">1 item</p>
+                    </div>
+                    <span th:replace="~{fragments/status-badge :: statusBadge(${order.status.name()})}">PENDING</span>
+                </div>
+
+                <div>
+                    <p class="text-sm font-bold text-slate-950" th:text="${order.displayCustomerName}">Customer</p>
+                    <p class="mt-0.5 break-all text-xs text-slate-500" th:text="${order.customerEmail}">customer@example.com</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 rounded-2xl bg-white/70 p-3 ring-1 ring-slate-100">
+                    <div>
+                        <p class="text-[0.68rem] font-bold uppercase tracking-wide text-slate-400">Payment</p>
+                        <div class="mt-1">
+                            <th:block th:if="${order.paymentStatus != null}">
+                                <span th:replace="~{fragments/payment-badge :: paymentBadge(${order.paymentStatus.name()})}">PENDING</span>
+                            </th:block>
+                            <span th:if="${order.paymentStatus == null}" class="text-xs font-semibold text-slate-400">Not selected</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[0.68rem] font-bold uppercase tracking-wide text-slate-400">Created</p>
+                        <p class="mt-1 text-xs font-semibold text-slate-700"
+                           th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-[0.68rem] font-bold uppercase tracking-wide text-slate-400">Total</p>
+                        <p class="mt-1 text-base font-bold text-slate-950"
+                           th:text="${'Rp ' + #numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</p>
+                    </div>
+                    <div class="flex shrink-0 items-center gap-2">
+                        <form th:if="${order.status.name() == 'PAID'}"
+                              th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                              method="post">
+                            <input type="hidden" name="status" value="PROCESSING">
+                            <button type="submit" class="inline-flex h-9 items-center justify-center rounded-xl bg-teal-700 px-3 text-sm font-bold text-white transition hover:bg-teal-800">
+                                Process
+                            </button>
+                        </form>
+                        <form th:if="${order.status.name() == 'PROCESSING'}"
+                              th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                              method="post">
+                            <input type="hidden" name="status" value="COMPLETED">
+                            <button type="submit" class="inline-flex h-9 items-center justify-center rounded-xl bg-teal-700 px-3 text-sm font-bold text-white transition hover:bg-teal-800">
+                                Complete
+                            </button>
+                        </form>
+                        <a th:href="@{/admin/orders/{id}(id=${order.id})}"
+                           class="inline-flex h-9 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
+                            Detail
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <div th:if="${#lists.isEmpty(orders)}" class="px-4 py-10 text-center text-sm font-medium text-slate-500">
+                No orders match the current filter.
+            </div>
+        </div>
+    </section>
 </section>
 </body>
 </html>

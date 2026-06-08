@@ -28,8 +28,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final PaymentFactory paymentFactory;
     private final OrderService orderService;
+    private final PaymentFactory paymentFactory = PaymentFactory.getInstance();
 
     @Override
     @Transactional(readOnly = true)

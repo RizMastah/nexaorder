@@ -54,8 +54,20 @@ public class InvoiceResponseDTO {
                 .paymentStatus(payment == null ? null : payment.getPaymentStatus())
                 .items(order.getOrderItems()
                         .stream()
-                        .map(OrderResponseDTO.OrderItemDTO::fromEntity)
-                        .toList())
+                .map(OrderResponseDTO.OrderItemDTO::fromEntity)
+                .toList())
                 .build();
+    }
+
+    public String getDisplayCustomerName() {
+        if (customerName == null || customerName.isBlank()) {
+            return "Customer";
+        }
+
+        if ("NexaOrder Customer".equalsIgnoreCase(customerName.trim())) {
+            return "Ariel Hikmat";
+        }
+
+        return customerName;
     }
 }

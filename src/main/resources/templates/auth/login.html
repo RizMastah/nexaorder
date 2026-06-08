@@ -1,65 +1,68 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/auth-layout :: authLayout('Login', ~{::section})}">
 <body>
-<section id="auth-card"
-         class="nexa-card p-8"
-         x-data="nexaAuth()">
-    <div class="mb-8 text-center">
-        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600 text-lg font-bold text-white">
-            N
-        </div>
-        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">NexaOrder</p>
-        <h1 class="mt-2 text-2xl font-semibold text-slate-950">Sign in to your account</h1>
-        <p class="mt-2 text-sm leading-6 text-slate-500">Access your order management workspace.</p>
+<section x-data="nexaAuth()">
+    <div class="mb-6">
+        <p class="nexa-section-label">Secure Access</p>
+        <h1 class="mt-2 text-[2rem] font-bold leading-tight tracking-[-0.04em] text-slate-950">Sign in to NexaOrder</h1>
+        <p class="mt-2 text-sm leading-6 text-slate-600">
+            Continue to the dashboard to manage orders, payments, stock, reports, and invoices.
+        </p>
     </div>
 
     <div th:if="${successMessage}"
-         class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+         class="mb-5 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800"
          th:text="${successMessage}">
     </div>
 
     <div th:if="${errorMessage}"
-         class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+         class="mb-5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
          th:text="${errorMessage}">
     </div>
 
-    <form class="space-y-5" th:action="@{/auth/login}" th:object="${loginRequest}" method="post">
+    <form class="space-y-4" th:action="@{/auth/login}" th:object="${loginRequest}" method="post">
         <div>
-            <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+            <label for="email" class="mb-2 block text-sm font-bold text-slate-700">Email address</label>
             <input id="email"
                    type="email"
                    th:field="*{email}"
-                   class="nexa-input"
-                   placeholder="admin@nexaorder.com">
-            <p class="mt-2 text-sm text-red-600" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                   class="nexa-auth-input"
+                   placeholder="admin@nexaorder.com"
+                   autocomplete="email">
+            <p class="mt-2 text-sm font-medium text-red-600" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
         </div>
 
         <div>
-            <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">Password</label>
-            <div class="relative">
-                <input id="password"
-                       th:field="*{password}"
-                       :type="showPassword ? 'text' : 'password'"
-                       class="nexa-input pr-20"
-                       placeholder="Enter your password">
+            <div class="mb-2 flex items-center justify-between gap-3">
+                <label for="password" class="block text-sm font-bold text-slate-700">Password</label>
                 <button type="button"
-                        class="absolute inset-y-0 right-0 px-4 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
+                        class="text-sm font-bold text-teal-700 transition hover:text-teal-800"
                         @click="showPassword = !showPassword"
                         x-text="showPassword ? 'Hide' : 'Show'">
                 </button>
             </div>
-            <p class="mt-2 text-sm text-red-600" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+            <input id="password"
+                   th:field="*{password}"
+                   :type="showPassword ? 'text' : 'password'"
+                   class="nexa-auth-input"
+                   placeholder="Enter your password"
+                   autocomplete="current-password">
+            <p class="mt-2 text-sm font-medium text-red-600" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
         </div>
 
-        <button type="submit" class="nexa-btn-primary w-full">
-            Sign In
+        <button type="submit" class="nexa-auth-primary mt-2 w-full">
+            Sign in
         </button>
     </form>
 
-    <p class="mt-6 text-center text-sm text-slate-600">
+    <div class="mt-5 rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600 ring-1 ring-slate-100">
+        Use the account assigned for your role. Admin and customer workspaces are separated after sign-in.
+    </div>
+
+    <p class="mt-5 text-center text-sm text-slate-600">
         New customer?
-        <a th:href="@{/auth/register}" class="font-semibold text-emerald-700 transition hover:text-emerald-800">Create an account</a>
+        <a th:href="@{/auth/register}" class="font-bold text-teal-700 transition hover:text-teal-800">Create an account</a>
     </p>
 </section>
 </body>

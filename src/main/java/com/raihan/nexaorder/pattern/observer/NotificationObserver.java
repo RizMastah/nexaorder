@@ -6,17 +6,16 @@ import com.raihan.nexaorder.enums.OrderStatus;
 import com.raihan.nexaorder.enums.UserRole;
 import com.raihan.nexaorder.repository.NotificationRepository;
 import com.raihan.nexaorder.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
-@Order(2)
-@Component
-@RequiredArgsConstructor
 public class NotificationObserver implements OrderEventObserver {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+
+    public NotificationObserver(NotificationRepository notificationRepository, UserRepository userRepository) {
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void onOrderStatusChanged(com.raihan.nexaorder.entity.Order order, OrderStatus oldStatus, OrderStatus newStatus) {

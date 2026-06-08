@@ -1,54 +1,121 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexaOrder</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css" rel="stylesheet">
-</head>
-<body class="min-h-screen bg-slate-100 text-slate-900">
-<main class="flex min-h-screen items-center justify-center px-6 py-12">
-    <section class="w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm sm:p-10"
-             x-data
-             id="home-card">
-        <div class="mb-8 flex items-center gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-lg font-bold text-white">
-                N
-            </div>
+<head th:replace="~{fragments/head :: head('Welcome')}"></head>
+<body class="nexa-public-shell min-h-screen text-slate-900">
+<header class="border-b border-[#e4e7df] bg-[#f7f8f3]/95">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a th:href="@{/}" class="flex items-center gap-3">
+            <img th:src="@{/images/nexaorder-icon.png}" alt="NexaOrder logo" class="h-10 w-10 rounded-xl object-contain">
             <div>
-                <p class="text-sm font-medium uppercase tracking-wide text-emerald-700">NexaOrder</p>
-                <h1 class="text-2xl font-semibold text-slate-950 sm:text-3xl">Spring Boot + Thymeleaf is running successfully.</h1>
+                <p class="text-sm font-bold uppercase tracking-wide text-teal-700">NexaOrder</p>
+                <p class="text-xs font-medium text-slate-500">Order Management</p>
+            </div>
+        </a>
+        <nav class="flex items-center gap-2">
+            <a th:href="@{/auth/login}" class="nexa-public-link">Login</a>
+            <a th:href="@{/auth/register}" class="nexa-accent-button hidden sm:inline-flex">Register</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:px-8 lg:py-12">
+        <div class="nexa-public-hero p-6 sm:p-8 lg:p-10">
+            <div class="max-w-3xl">
+                <p class="nexa-section-label">Web-Based Order Management System</p>
+                <h1 class="mt-3 max-w-4xl text-4xl font-bold tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
+                    A practical dashboard for products, orders, payments, inventory, and invoices.
+                </h1>
+                <p class="mt-5 max-w-2xl text-base leading-7 text-slate-600">
+                    NexaOrder helps one business manage customer orders from product selection to payment confirmation, stock movement, invoice records, and operational reports.
+                </p>
+            </div>
+
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a th:href="@{/auth/login}" class="nexa-public-primary">Open workspace</a>
+                <a th:href="@{/auth/register}" class="nexa-public-secondary">Create customer account</a>
+            </div>
+
+            <div class="mt-8 grid gap-3 sm:grid-cols-3">
+                <article class="nexa-public-stat">
+                    <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Orders</p>
+                    <p class="mt-2 text-xl font-bold text-slate-950">Track status</p>
+                    <p class="mt-1 text-sm leading-5 text-slate-600">Pending, paid, processing, completed, or cancelled.</p>
+                </article>
+                <article class="nexa-public-stat">
+                    <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Payments</p>
+                    <p class="mt-2 text-xl font-bold text-slate-950">Confirm methods</p>
+                    <p class="mt-1 text-sm leading-5 text-slate-600">E-Wallet, bank transfer, and cash on delivery.</p>
+                </article>
+                <article class="nexa-public-stat">
+                    <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Inventory</p>
+                    <p class="mt-2 text-xl font-bold text-slate-950">Stock control</p>
+                    <p class="mt-1 text-sm leading-5 text-slate-600">Stock changes are logged after order events.</p>
+                </article>
             </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-3">
-            <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p class="text-sm font-medium text-slate-500">Backend</p>
-                <p class="mt-1 font-semibold text-slate-900">Spring Boot</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p class="text-sm font-medium text-slate-500">Template</p>
-                <p class="mt-1 font-semibold text-slate-900">Thymeleaf</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p class="text-sm font-medium text-slate-500">UI</p>
-                <p class="mt-1 font-semibold text-slate-900">Tailwind + Flowbite</p>
-            </div>
-        </div>
+        <aside class="space-y-4">
+            <section class="nexa-public-panel p-5">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Demo Access</p>
+                        <h2 class="mt-1 text-lg font-bold text-slate-950">Use the prepared accounts</h2>
+                    </div>
+                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-teal-700">Ready</span>
+                </div>
 
-        <div class="mt-8 flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p class="text-sm text-slate-600">Initial setup page for the NexaOrder order management dashboard.</p>
-            <a href="/auth/login"
-               class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-200">
-                Go to Login
-            </a>
-        </div>
+                <div class="mt-5 space-y-3">
+                    <div class="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="text-sm font-bold text-slate-950">Admin</p>
+                            <span class="text-xs font-bold uppercase text-teal-700">Full control</span>
+                        </div>
+                        <p class="mt-2 text-sm text-slate-600">admin@nexaorder.com</p>
+                        <p class="mt-1 text-sm text-slate-600">admin123</p>
+                    </div>
+                    <div class="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="text-sm font-bold text-slate-950">Customer</p>
+                            <span class="text-xs font-bold uppercase text-teal-700">Order flow</span>
+                        </div>
+                        <p class="mt-2 text-sm text-slate-600">customer@nexaorder.com</p>
+                        <p class="mt-1 text-sm text-slate-600">customer123</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="nexa-public-panel overflow-hidden">
+                <div class="border-b border-slate-100 px-5 py-4">
+                    <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Workspace Preview</p>
+                    <h2 class="mt-1 text-lg font-bold text-slate-950">Operational snapshot</h2>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    <div class="flex items-center justify-between gap-4 px-5 py-4">
+                        <div>
+                            <p class="text-sm font-bold text-slate-950">Bank transfer review</p>
+                            <p class="mt-1 text-xs text-slate-500">Admin confirms before stock is reduced.</p>
+                        </div>
+                        <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-700">Waiting</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 px-5 py-4">
+                        <div>
+                            <p class="text-sm font-bold text-slate-950">Invoice records</p>
+                            <p class="mt-1 text-xs text-slate-500">Available after a valid paid order.</p>
+                        </div>
+                        <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-teal-700">Ready</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 px-5 py-4">
+                        <div>
+                            <p class="text-sm font-bold text-slate-950">Low stock warning</p>
+                            <p class="mt-1 text-xs text-slate-500">Inventory changes are recorded.</p>
+                        </div>
+                        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">Monitor</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
     </section>
 </main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

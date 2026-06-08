@@ -5,9 +5,9 @@
 <section class="space-y-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Notifications</p>
-            <h2 class="mt-2 text-2xl font-semibold text-slate-950">My Notifications</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            <p class="nexa-section-label">Notifications</p>
+            <h2 class="nexa-admin-title">My Notifications</h2>
+            <p class="nexa-admin-description">
                 Track payment, order status, and invoice updates from NexaOrder.
             </p>
         </div>
@@ -17,13 +17,13 @@
 
     <div class="flex flex-wrap gap-2">
         <a th:href="@{/customer/notifications(filter='all')}"
-           class="rounded-xl px-4 py-2 text-sm font-semibold transition"
-           th:classappend="${selectedFilter == 'all'} ? ' bg-emerald-600 text-white' : ' border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'">
+           class="nexa-filter-chip"
+           th:classappend="${selectedFilter == 'all'} ? ' nexa-filter-chip-active' : ''">
             All
         </a>
         <a th:href="@{/customer/notifications(filter='unread')}"
-           class="rounded-xl px-4 py-2 text-sm font-semibold transition"
-           th:classappend="${selectedFilter == 'unread'} ? ' bg-emerald-600 text-white' : ' border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'">
+           class="nexa-filter-chip"
+           th:classappend="${selectedFilter == 'unread'} ? ' nexa-filter-chip-active' : ''">
             Unread
         </a>
     </div>
@@ -36,7 +36,7 @@
     </div>
 
     <div class="space-y-3">
-        <article th:each="notification : ${notifications}" class="nexa-card p-5">
+        <article th:each="notification : ${notifications}" class="nexa-admin-surface p-5">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0">
                     <div class="flex items-center gap-2">
@@ -55,7 +55,7 @@
         </article>
     </div>
 
-    <div th:if="${#lists.isEmpty(notifications)}" class="nexa-card p-10 text-center">
+    <div th:if="${#lists.isEmpty(notifications)}" class="nexa-admin-surface p-10 text-center">
         <p class="text-sm font-medium text-slate-600">No notifications match the current filter.</p>
     </div>
 </section>

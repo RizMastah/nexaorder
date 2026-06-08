@@ -6,17 +6,16 @@ import com.raihan.nexaorder.enums.InventoryChangeType;
 import com.raihan.nexaorder.enums.OrderStatus;
 import com.raihan.nexaorder.repository.ProductRepository;
 import com.raihan.nexaorder.service.InventoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
-@Order(1)
-@Component
-@RequiredArgsConstructor
 public class InventoryObserver implements OrderEventObserver {
 
     private final ProductRepository productRepository;
     private final InventoryService inventoryService;
+
+    public InventoryObserver(ProductRepository productRepository, InventoryService inventoryService) {
+        this.productRepository = productRepository;
+        this.inventoryService = inventoryService;
+    }
 
     @Override
     public void onOrderStatusChanged(com.raihan.nexaorder.entity.Order order, OrderStatus oldStatus, OrderStatus newStatus) {

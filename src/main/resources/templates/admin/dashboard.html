@@ -48,8 +48,8 @@
             #admin-dashboard-bitepoint .insight-surface {
                 border: 1px solid #e4e7df;
                 border-radius: 1.25rem;
-                background: rgba(255, 254, 249, 0.72);
-                box-shadow: 0 5px 14px rgba(37, 45, 34, 0.035);
+                background: rgba(255, 254, 249, 0.54);
+                box-shadow: none;
             }
 
             #admin-dashboard-bitepoint .accent-button {
@@ -72,6 +72,28 @@
                 font-weight: 800;
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
+            }
+
+            #admin-dashboard-bitepoint .filter-chip {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 2.25rem;
+                border-radius: 999px;
+                border: 1px solid #dfe4dc;
+                background: rgba(255, 254, 249, 0.72);
+                padding: 0 0.95rem;
+                font-size: 0.875rem;
+                font-weight: 700;
+                color: #64748b;
+                transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+            }
+
+            #admin-dashboard-bitepoint .filter-chip:hover,
+            #admin-dashboard-bitepoint .filter-chip-active {
+                border-color: #ccd5c8;
+                background: #fffef9;
+                color: #0f172a;
             }
         }
     </style>
@@ -144,7 +166,7 @@
         </div>
     </div>
 
-    <section class="insight-surface p-4">
+    <section class="insight-surface p-3.5">
         <div class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Analytics snapshot</p>
@@ -153,17 +175,17 @@
             <a th:href="@{/admin/reports}" class="text-sm font-semibold text-teal-700 transition hover:text-teal-800">Open full report</a>
         </div>
 
-        <div class="mt-3 grid gap-3 lg:grid-cols-[220px_1fr]">
-            <div class="rounded-2xl border border-slate-200 bg-white/80 p-3">
+        <div class="mt-3 grid gap-3 lg:grid-cols-[210px_1fr]">
+            <div class="rounded-2xl border border-slate-200/80 bg-white/55 p-3">
                 <h4 class="text-sm font-bold text-slate-900">Order status</h4>
-                <div class="mt-2 h-32">
+                <div class="mt-2 h-28">
                     <canvas id="dashboardOrderStatusChart"></canvas>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-slate-200 bg-white/80 p-3">
+            <div class="rounded-2xl border border-slate-200/80 bg-white/55 p-3">
                 <h4 class="text-sm font-bold text-slate-900">Best-selling products</h4>
-                <div class="mt-2 h-32">
+                <div class="mt-2 h-28">
                     <canvas id="dashboardBestSellingChart"></canvas>
                 </div>
             </div>
@@ -172,19 +194,19 @@
 
     <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div class="flex flex-wrap gap-2">
-            <span class="rounded-xl bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-slate-200">All</span>
-            <a th:href="@{/admin/orders(status='PAID')}" class="rounded-xl bg-white/70 px-3.5 py-2 text-sm font-semibold text-slate-500 ring-1 ring-slate-200 transition hover:bg-white hover:text-slate-900">Ready</a>
-            <a th:href="@{/admin/orders(status='PROCESSING')}" class="rounded-xl bg-white/70 px-3.5 py-2 text-sm font-semibold text-slate-500 ring-1 ring-slate-200 transition hover:bg-white hover:text-slate-900">On Process</a>
-            <a th:href="@{/admin/orders(status='COMPLETED')}" class="rounded-xl bg-white/70 px-3.5 py-2 text-sm font-semibold text-slate-500 ring-1 ring-slate-200 transition hover:bg-white hover:text-slate-900">Completed</a>
+            <span class="filter-chip filter-chip-active">All</span>
+            <a th:href="@{/admin/orders(status='PAID')}" class="filter-chip">Ready</a>
+            <a th:href="@{/admin/orders(status='PROCESSING')}" class="filter-chip">On Process</a>
+            <a th:href="@{/admin/orders(status='COMPLETED')}" class="filter-chip">Completed</a>
         </div>
         <a th:href="@{/admin/orders}" class="text-sm font-semibold text-teal-700 transition hover:text-teal-800">View all orders</a>
     </div>
 
     <div class="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
-        <article th:each="order : ${report.recentOrders}" class="order-surface p-3.5">
+        <article th:each="order : ${report.recentOrders}" class="order-surface p-3">
             <div class="flex items-start justify-between gap-3">
                 <div class="flex min-w-0 items-center gap-3">
-                    <div class="flex h-9 min-w-12 items-center justify-center rounded-2xl px-3 text-xs font-bold text-white"
+                    <div class="flex h-8 min-w-11 items-center justify-center rounded-xl px-2.5 text-xs font-bold text-white"
                          th:classappend="${order.status.name() == 'PAID'} ? ' bg-teal-700' : (${order.status.name() == 'PENDING'} ? ' bg-amber-400 text-slate-900' : ' bg-slate-700')"
                          th:text="${'#' + order.id}">#1</div>
                     <div class="min-w-0">
@@ -195,12 +217,12 @@
                 <span th:replace="~{fragments/status-badge :: statusBadge(${order.status.name()})}">PENDING</span>
             </div>
 
-            <div class="mt-3 flex items-center justify-between border-y border-slate-100 py-2 text-xs text-slate-500">
+            <div class="mt-2.5 flex items-center justify-between border-y border-slate-100 py-1.5 text-xs text-slate-500">
                 <span th:text="${#temporals.format(order.createdAt, 'EEE, dd MMM yyyy')}">Wed, 01 Jun 2026</span>
                 <span th:text="${#temporals.format(order.createdAt, 'HH:mm')}">10:00</span>
             </div>
 
-            <div class="mt-3 space-y-1.5">
+            <div class="mt-2.5 space-y-1">
                 <div class="grid grid-cols-[1fr_48px_90px] gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
                     <span>Item</span>
                     <span class="text-center">Qty</span>
@@ -216,7 +238,7 @@
                    th:text="${'+' + (#lists.size(order.items) - 3) + ' more'}">+1 more</p>
             </div>
 
-            <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+            <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-2.5">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Total</p>
                     <p class="mt-1 text-base font-semibold text-slate-950"
@@ -224,11 +246,11 @@
                 </div>
                 <div class="flex gap-2">
                     <a th:href="@{/admin/orders/{id}(id=${order.id})}"
-                       class="inline-flex h-9 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                       class="inline-flex h-8 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
                         See Details
                     </a>
                     <a th:if="${order.paymentStatus != null and order.paymentStatus.name() == 'WAITING_CONFIRMATION'}"
-                       th:href="@{/admin/payments}" class="accent-button inline-flex h-9 items-center justify-center rounded-xl px-3 text-sm font-semibold transition">
+                       th:href="@{/admin/payments}" class="accent-button inline-flex h-8 items-center justify-center rounded-xl px-3 text-sm font-semibold transition">
                         Pay Bills
                     </a>
                 </div>

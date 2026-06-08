@@ -2,86 +2,93 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-layout :: adminLayout('Inventory', ~{::section})}">
 <body>
-<section class="space-y-6">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+<section class="nexa-admin-page space-y-5">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Stock Control</p>
-            <h2 class="mt-2 text-2xl font-semibold text-slate-950">Inventory</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            <p class="nexa-section-label">Stock Control</p>
+            <h2 class="nexa-admin-title">Inventory</h2>
+            <p class="nexa-admin-description">
                 Review stock levels, catch low-stock products, and record manual inventory changes.
             </p>
         </div>
         <a th:href="@{/admin/products}" class="nexa-btn-secondary">Manage products</a>
     </div>
 
-    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+    <div th:if="${successMessage}" class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
         <span th:text="${successMessage}">Stock adjusted.</span>
     </div>
-    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+    <div th:if="${errorMessage}" class="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
         <span th:text="${errorMessage}">Adjustment failed.</span>
     </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article class="nexa-card p-5">
-            <p class="text-sm font-semibold text-slate-500">Products</p>
-            <p class="mt-3 text-3xl font-semibold text-slate-950" th:text="${#lists.size(products)}">0</p>
-            <p class="mt-2 text-sm text-slate-500">Tracked in catalog</p>
+    <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="nexa-admin-stat">
+            <p class="nexa-admin-stat-label">Products</p>
+            <p class="nexa-admin-stat-value" th:text="${#lists.size(products)}">0</p>
+            <p class="mt-1 text-xs font-medium text-slate-500">Tracked catalog items</p>
         </article>
-        <article class="nexa-card p-5">
-            <p class="text-sm font-semibold text-slate-500">Total Stock</p>
-            <p class="mt-3 text-3xl font-semibold text-slate-950" th:text="${totalStock}">0</p>
-            <p class="mt-2 text-sm text-slate-500">Units available</p>
+        <article class="nexa-admin-stat">
+            <p class="nexa-admin-stat-label">Total Stock</p>
+            <p class="nexa-admin-stat-value" th:text="${totalStock}">0</p>
+            <p class="mt-1 text-xs font-medium text-slate-500">Units available</p>
         </article>
-        <article class="nexa-card p-5">
-            <p class="text-sm font-semibold text-slate-500">Low Stock</p>
-            <p class="mt-3 text-3xl font-semibold text-amber-700" th:text="${#lists.size(lowStockProducts)}">0</p>
-            <p class="mt-2 text-sm text-slate-500" th:text="${'At or below ' + lowStockThreshold + ' units'}">At threshold</p>
+        <article class="nexa-admin-stat">
+            <p class="nexa-admin-stat-label">Low Stock</p>
+            <p class="nexa-admin-stat-value text-amber-600" th:text="${#lists.size(lowStockProducts)}">0</p>
+            <p class="mt-1 text-xs font-medium text-slate-500" th:text="${'At or below ' + lowStockThreshold + ' units'}">At threshold</p>
         </article>
-        <article class="nexa-card p-5">
-            <p class="text-sm font-semibold text-slate-500">Out of Stock</p>
-            <p class="mt-3 text-3xl font-semibold text-red-700" th:text="${outOfStockCount}">0</p>
-            <p class="mt-2 text-sm text-slate-500">Needs attention</p>
+        <article class="nexa-admin-stat">
+            <p class="nexa-admin-stat-label">Out of Stock</p>
+            <p class="nexa-admin-stat-value text-red-600" th:text="${outOfStockCount}">0</p>
+            <p class="mt-1 text-xs font-medium text-slate-500">Needs attention</p>
         </article>
     </div>
 
-    <div th:if="${!#lists.isEmpty(lowStockProducts)}" class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-                <h3 class="text-sm font-semibold text-amber-900">Low-stock products</h3>
-                <p class="mt-1 text-sm text-amber-800">
-                    <span th:each="product, iter : ${lowStockProducts}">
-                        <span th:text="${product.name}">Product</span><span th:if="${!iter.last}">, </span>
-                    </span>
-                </p>
+    <div th:if="${!#lists.isEmpty(lowStockProducts)}" class="nexa-admin-surface p-4">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                    <p class="text-xs font-bold uppercase tracking-wide text-amber-600">Inventory alert</p>
+                    <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                          th:text="${#lists.size(lowStockProducts) + ' items'}">1 item</span>
+                </div>
+                <h3 class="mt-1 text-base font-bold tracking-tight text-slate-950">Low-stock products need restock.</h3>
             </div>
-            <span class="inline-flex w-fit rounded-full bg-white px-3 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">
-                Restock soon
-            </span>
+            <div class="flex flex-1 flex-wrap items-center gap-2 xl:justify-end">
+                <article th:each="product : ${lowStockProducts}" class="flex min-w-52 items-center justify-between gap-4 rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3">
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-bold text-slate-950" th:text="${product.name}">Product</p>
+                        <p class="mt-0.5 text-xs text-slate-500" th:text="${product.category}">Category</p>
+                    </div>
+                    <p class="whitespace-nowrap text-sm font-semibold text-amber-700" th:text="${product.stock + ' left'}">0 left</p>
+                </article>
+            </div>
         </div>
     </div>
 
-    <div class="nexa-card overflow-hidden">
-        <div class="border-b border-slate-200 px-5 py-4">
-            <h3 class="text-base font-semibold text-slate-950">Product Stock</h3>
+    <section class="nexa-admin-surface overflow-hidden">
+        <div class="border-b border-slate-100 px-4 py-3.5">
+            <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Stock Table</p>
+            <h3 class="mt-1 text-base font-bold tracking-tight text-slate-950">Product stock</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50">
+            <table class="nexa-admin-table">
+                <thead>
                 <tr>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Product</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Category</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Stock</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Adjustment</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Stock</th>
+                    <th scope="col">Adjustment</th>
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
-                <tr th:each="product : ${products}" class="align-top transition hover:bg-slate-50">
-                    <td class="px-5 py-4">
-                        <p class="text-sm font-semibold text-slate-950" th:text="${product.name}">Product</p>
-                        <p class="mt-1 text-xs text-slate-500" th:text="${'ID #' + product.id}">ID</p>
+                <tbody>
+                <tr th:each="product : ${products}" class="align-top">
+                    <td>
+                        <p class="text-sm font-bold text-slate-950" th:text="${product.name}">Product</p>
+                        <p class="mt-0.5 text-xs text-slate-500" th:text="${'ID #' + product.id}">ID</p>
                     </td>
-                    <td class="px-5 py-4 text-sm font-medium text-slate-700" th:text="${product.category}">Category</td>
-                    <td class="px-5 py-4">
+                    <td class="font-semibold text-slate-700" th:text="${product.category}">Category</td>
+                    <td>
                         <span th:if="${product.outOfStock}"
                               class="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
                             Out of stock
@@ -93,70 +100,71 @@
                               class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800"
                               th:text="${product.stock + ' in stock'}">Stock</span>
                     </td>
-                    <td class="px-5 py-4">
-                        <form th:action="@{/admin/inventory/adjust/{id}(id=${product.id})}" method="post" class="grid gap-2 lg:grid-cols-[110px_1fr_auto]">
+                    <td>
+                        <form th:action="@{/admin/inventory/adjust/{id}(id=${product.id})}" method="post" class="grid gap-2 lg:grid-cols-[96px_1fr_auto]">
                             <input type="number"
                                    name="quantityChange"
                                    required
-                                   class="nexa-input py-2"
+                                   class="nexa-admin-input py-2"
                                    placeholder="+10">
                             <input type="text"
                                    name="description"
                                    maxlength="500"
-                                   class="nexa-input py-2"
+                                   class="nexa-admin-input py-2"
                                    placeholder="Adjustment note">
-                            <button type="submit" class="nexa-btn-primary py-2">Adjust</button>
+                            <button type="submit" class="nexa-accent-button min-h-0 py-2">Adjust</button>
                         </form>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(products)}">
-                    <td colspan="4" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                    <td colspan="4" class="py-10 text-center text-sm font-medium text-slate-500">
                         Add products before managing inventory.
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 
-    <div class="nexa-card overflow-hidden">
-        <div class="border-b border-slate-200 px-5 py-4">
-            <h3 class="text-base font-semibold text-slate-950">Inventory Logs</h3>
+    <section class="nexa-admin-surface overflow-hidden">
+        <div class="border-b border-slate-100 px-4 py-3.5">
+            <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Audit Trail</p>
+            <h3 class="mt-1 text-base font-bold tracking-tight text-slate-950">Inventory logs</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50">
+            <table class="nexa-admin-table">
+                <thead>
                 <tr>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Time</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Product</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Type</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Change</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Description</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Change</th>
+                    <th scope="col">Description</th>
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
-                <tr th:each="log : ${inventoryLogs}" class="transition hover:bg-slate-50">
-                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-600"
+                <tbody>
+                <tr th:each="log : ${inventoryLogs}">
+                    <td class="whitespace-nowrap"
                         th:text="${#temporals.format(log.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</td>
-                    <td class="px-5 py-4 text-sm font-semibold text-slate-950" th:text="${log.product.name}">Product</td>
-                    <td class="px-5 py-4">
+                    <td class="font-bold text-slate-950" th:text="${log.product.name}">Product</td>
+                    <td>
                         <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700"
                               th:text="${log.changeType}">ADJUSTMENT</span>
                     </td>
-                    <td class="px-5 py-4 text-sm font-semibold"
+                    <td class="font-bold"
                         th:classappend="${log.quantityChange >= 0} ? ' text-emerald-700' : ' text-red-700'"
                         th:text="${log.quantityChange > 0 ? '+' + log.quantityChange : log.quantityChange}">+0</td>
-                    <td class="px-5 py-4 text-sm text-slate-600" th:text="${log.description ?: '-'}">Description</td>
+                    <td th:text="${log.description ?: '-'}">Description</td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(inventoryLogs)}">
-                    <td colspan="5" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                    <td colspan="5" class="py-10 text-center text-sm font-medium text-slate-500">
                         Inventory changes will appear here after product stock is created or adjusted.
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 </section>
 </body>
 </html>

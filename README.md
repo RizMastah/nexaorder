@@ -26,14 +26,14 @@ NexaOrder is a web-based order management system for small-business product, inv
 
 ## Design Patterns
 
-- MVC Pattern: Spring MVC controllers, services, repositories, and Thymeleaf views
-- Repository Pattern: Spring Data JPA repositories for database access
-- DTO Pattern: request/response DTOs for forms and page data
-- Strategy Pattern: payment behavior per payment method
-- Factory Method Pattern: `PaymentFactory` selects the correct payment strategy
-- State Pattern: order status transitions are controlled by `OrderState` classes
-- Observer Pattern: order status events trigger notification and inventory observers
-- Singleton Pattern: Spring services, components, and repositories are singleton beans by default
+- MVC Pattern: project-owned controllers, services, repository interfaces, and Thymeleaf views form the MVC flow; Spring MVC only handles HTTP dispatching.
+- Repository Pattern: project-owned repository interfaces such as `UserRepository` and `ProductRepository` are implemented by adapter classes such as `UserRepositoryImpl`; `SpringData...Repository` delegates are only the persistence detail.
+- DTO Pattern: request/response DTO classes in the `dto` package carry form and page data.
+- Strategy Pattern: payment behavior is implemented by plain Java strategy classes for `EWALLET`, `BANK_TRANSFER`, and `CASH_ON_DELIVERY`.
+- Factory Method Pattern: `PaymentFactory` and `OrderStateFactory` manually create strategy/state objects without Spring auto-discovery.
+- State Pattern: order status transitions are controlled by plain Java `OrderState` classes.
+- Observer Pattern: `OrderEventPublisher` manually registers notification and inventory observers; observers are not auto-collected by Spring.
+- Singleton Pattern: `PaymentFactory`, `OrderStateFactory`, and `InvoiceNumberGenerator` use explicit private constructors and `getInstance()` methods.
 
 ## Demo Accounts
 

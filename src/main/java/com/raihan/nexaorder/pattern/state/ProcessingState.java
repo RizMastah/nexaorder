@@ -1,11 +1,9 @@
 package com.raihan.nexaorder.pattern.state;
 
 import com.raihan.nexaorder.enums.OrderStatus;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public class ProcessingState implements OrderState {
 
     @Override

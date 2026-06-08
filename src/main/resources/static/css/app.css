@@ -87,3 +87,411 @@ body {
 .nexa-btn-secondary:hover {
     background: rgb(248 250 252);
 }
+
+body:has(.nexa-admin-page) {
+    background: #eef0eb;
+}
+
+body:has(.nexa-admin-page) main {
+    padding-top: 1.25rem;
+}
+
+body:has(.nexa-admin-page) header {
+    border-color: #e4e7df;
+    background: #f7f8f3;
+}
+
+body:has(.nexa-admin-page) aside.fixed {
+    border-color: #e7e8df;
+    background: #fffef9;
+}
+
+body:has(.nexa-admin-page) aside.fixed .bg-emerald-600 {
+    background: #0f766e;
+}
+
+body:has(.nexa-admin-page) aside.fixed .text-emerald-700 {
+    color: #0f766e;
+}
+
+body:has(.nexa-admin-page) aside.fixed .nexa-nav-link:hover,
+body:has(.nexa-admin-page) aside.fixed .nexa-nav-link-active {
+    background: #ffd24d;
+    color: #1f2933;
+}
+
+.nexa-admin-page {
+    margin-inline: auto;
+    max-width: 1440px;
+}
+
+.nexa-section-label {
+    color: #2f746f;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nexa-admin-title {
+    margin-top: 0.25rem;
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    color: #020617;
+}
+
+.nexa-admin-description {
+    margin-top: 0.25rem;
+    max-width: 42rem;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    color: #475569;
+}
+
+.nexa-admin-surface {
+    border: 1px solid #e4e7df;
+    border-radius: 1.25rem;
+    background: #fffef9;
+    box-shadow: 0 8px 20px rgba(37, 45, 34, 0.055);
+}
+
+.nexa-admin-subtle-surface {
+    border: 1px solid #e4e7df;
+    border-radius: 1.25rem;
+    background: rgba(255, 254, 249, 0.54);
+}
+
+.nexa-admin-stat {
+    border: 1px solid #e4e7df;
+    border-radius: 1.25rem;
+    background: #fffef9;
+    padding: 1rem;
+    box-shadow: 0 8px 20px rgba(37, 45, 34, 0.055);
+}
+
+.nexa-admin-stat-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.nexa-admin-stat-value {
+    margin-top: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 2rem;
+    letter-spacing: -0.03em;
+    color: #020617;
+}
+
+.nexa-admin-stat-value.text-amber-600 {
+    color: #d97706;
+}
+
+.nexa-admin-stat-value.text-red-600 {
+    color: #dc2626;
+}
+
+.nexa-admin-table {
+    min-width: 100%;
+    color: #475569;
+}
+
+.nexa-admin-table thead tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.nexa-admin-table th {
+    padding: 0.625rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.nexa-admin-table th.text-right {
+    text-align: right;
+}
+
+.nexa-admin-table td {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+}
+
+.nexa-admin-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 150ms ease;
+}
+
+.nexa-admin-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.nexa-admin-table tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.nexa-filter-chip {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid #dfe4dc;
+    background: rgba(255, 254, 249, 0.72);
+    padding: 0 0.95rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #64748b;
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.nexa-filter-chip:hover,
+.nexa-filter-chip-active {
+    border-color: #ccd5c8;
+    background: #fffef9;
+    color: #0f172a;
+}
+
+.nexa-accent-button {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background: #ffd24d;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1f2933;
+    transition: background-color 150ms ease;
+}
+
+.nexa-accent-button:hover {
+    background: #f6c532;
+}
+
+.nexa-admin-icon {
+    display: flex;
+    height: 2.25rem;
+    width: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #f1f5f9;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.nexa-admin-input {
+    display: block;
+    width: 100%;
+    border-radius: 0.875rem;
+    border: 1px solid #d8ded2;
+    background: #fffef9;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #0f172a;
+}
+
+.nexa-admin-input:focus {
+    border-color: #8bbab0;
+    box-shadow: 0 0 0 3px rgba(63, 127, 117, 0.14);
+    outline: none;
+}
+
+body.nexa-customer-shell {
+    background: #eef0eb;
+}
+
+body.nexa-customer-shell header {
+    border-color: #e4e7df;
+    background: #f7f8f3;
+}
+
+body.nexa-customer-shell aside.fixed {
+    border-color: #e7e8df;
+    background: #fffef9;
+}
+
+body.nexa-customer-shell aside.fixed .text-emerald-700,
+body.nexa-customer-shell .text-emerald-700 {
+    color: #0f766e;
+}
+
+body.nexa-customer-shell aside.fixed .nexa-nav-link:hover,
+body.nexa-customer-shell aside.fixed .nexa-nav-link-active {
+    background: #ffd24d;
+    color: #1f2933;
+}
+
+body.nexa-customer-shell .nexa-card {
+    border-color: #e4e7df;
+    background: #fffef9;
+    box-shadow: 0 8px 20px rgba(37, 45, 34, 0.055);
+}
+
+body.nexa-customer-shell .nexa-btn-primary,
+body.nexa-customer-shell .bg-emerald-600 {
+    background: #0f766e;
+}
+
+body.nexa-customer-shell .nexa-btn-primary:hover,
+body.nexa-customer-shell .hover\:bg-emerald-700:hover {
+    background: #0d625d;
+}
+
+body.nexa-customer-shell .nexa-input {
+    border-color: #d8ded2;
+    background: #fffef9;
+}
+
+body.nexa-customer-shell .nexa-input:focus {
+    border-color: #8bbab0;
+    box-shadow: 0 0 0 3px rgba(63, 127, 117, 0.14);
+}
+
+.nexa-customer-page {
+    margin-inline: auto;
+    max-width: 1440px;
+}
+
+@media (max-width: 640px) {
+    .nexa-customer-shell main {
+        padding-inline: 1rem;
+    }
+
+    .nexa-customer-shell .nexa-card {
+        border-radius: 1rem;
+    }
+}
+
+.nexa-public-shell,
+.nexa-auth-shell {
+    background: #eef0eb;
+}
+
+.nexa-public-hero,
+.nexa-public-panel,
+.nexa-auth-brand,
+.nexa-auth-card {
+    border: 1px solid #e4e7df;
+    border-radius: 1.5rem;
+    background: #fffef9;
+    box-shadow: 0 12px 28px rgba(37, 45, 34, 0.06);
+}
+
+.nexa-public-panel,
+.nexa-auth-card {
+    background: #fffef9;
+}
+
+.nexa-auth-brand {
+    min-height: 35rem;
+    background:
+        linear-gradient(135deg, rgba(255, 210, 77, 0.2), rgba(255, 254, 249, 0) 30%),
+        #fffef9;
+}
+
+.nexa-auth-card {
+    align-self: center;
+}
+
+.nexa-public-link {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #334155;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.nexa-public-link:hover {
+    background: #fffef9;
+    color: #0f766e;
+}
+
+.nexa-public-primary,
+.nexa-auth-primary {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.875rem;
+    background: #0f766e;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.nexa-public-primary:hover,
+.nexa-auth-primary:hover {
+    background: #0b5f59;
+    box-shadow: 0 10px 20px rgba(15, 118, 110, 0.22);
+}
+
+.nexa-public-secondary {
+    display: inline-flex;
+    min-height: 2.875rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.875rem;
+    border: 1px solid #d8ded2;
+    background: #fffef9;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1f2933;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.nexa-public-secondary:hover {
+    border-color: #ccd5c8;
+    background: #fff;
+}
+
+.nexa-public-stat {
+    border: 1px solid #e8ebe3;
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.72);
+    padding: 1rem;
+}
+
+.nexa-auth-input {
+    display: block;
+    width: 100%;
+    border-radius: 0.875rem;
+    border: 1px solid #d8ded2;
+    background: #fffef9;
+    padding: 0.8rem 0.95rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.nexa-auth-input:focus {
+    border-color: #8bbab0;
+    box-shadow: 0 0 0 3px rgba(63, 127, 117, 0.14);
+    outline: none;
+}
+
+@media (max-width: 640px) {
+    .nexa-public-hero,
+    .nexa-public-panel,
+    .nexa-auth-card {
+        border-radius: 1.25rem;
+    }
+}

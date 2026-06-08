@@ -21,7 +21,7 @@
          x-show="notificationsOpen"
          @click.outside="notificationsOpen = false"
          x-transition.opacity
-         class="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+         class="absolute right-0 z-50 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <p class="text-sm font-semibold text-slate-950">Notifications</p>
             <a th:href="${session.userRole == 'ADMIN'} ? @{/admin/notifications} : @{/customer/notifications}"

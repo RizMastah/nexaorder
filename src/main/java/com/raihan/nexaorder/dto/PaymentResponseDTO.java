@@ -73,7 +73,19 @@ public class PaymentResponseDTO {
                 .confirmable(false)
                 .items(order.getOrderItems().stream()
                         .map(OrderResponseDTO.OrderItemDTO::fromEntity)
-                        .toList())
+                .toList())
                 .build();
+    }
+
+    public String getDisplayCustomerName() {
+        if (customerName == null || customerName.isBlank()) {
+            return "Customer";
+        }
+
+        if ("NexaOrder Customer".equalsIgnoreCase(customerName.trim())) {
+            return "Ariel Hikmat";
+        }
+
+        return customerName;
     }
 }

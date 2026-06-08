@@ -1,9 +1,7 @@
 package com.raihan.nexaorder.pattern.state;
 
 import com.raihan.nexaorder.enums.OrderStatus;
-import org.springframework.stereotype.Component;
 
-@Component
 public class CancelledState implements OrderState {
 
     @Override

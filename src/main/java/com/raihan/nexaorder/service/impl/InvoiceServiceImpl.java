@@ -3,9 +3,11 @@ package com.raihan.nexaorder.service.impl;
 import com.raihan.nexaorder.dto.InvoiceResponseDTO;
 import com.raihan.nexaorder.entity.Invoice;
 import com.raihan.nexaorder.entity.Order;
+import com.raihan.nexaorder.enums.OrderStatus;
 import com.raihan.nexaorder.repository.InvoiceRepository;
 import com.raihan.nexaorder.repository.OrderRepository;
 import com.raihan.nexaorder.service.InvoiceService;
+import com.raihan.nexaorder.util.InvoiceNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final OrderRepository orderRepository;
+    private final InvoiceNumberGenerator invoiceNumberGenerator = InvoiceNumberGenerator.getInstance();
 
     @Override
     @Transactional
@@ -61,19 +64,30 @@ public class InvoiceServiceImpl implements InvoiceService {
     private InvoiceResponseDTO createInvoice(Long orderId) {
         Order order = orderRepository.findDetailedById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order was not found"));
+        if (!canCreateInvoice(order.getStatus())) {
+            throw new IllegalArgumentException("Invoice is only available after the order is paid");
+        }
+
+        LocalDateTime issuedAt = LocalDateTime.now();
 
         Invoice invoice = Invoice.builder()
                 .order(order)
-                .invoiceNumber(nextInvoiceNumber())
-                .issuedAt(LocalDateTime.now())
+                .invoiceNumber(nextInvoiceNumber(issuedAt))
+                .issuedAt(issuedAt)
                 .totalAmount(order.getTotalPrice())
                 .build();
 
         return InvoiceResponseDTO.fromEntity(invoiceRepository.save(invoice));
     }
 
-    private String nextInvoiceNumber() {
+    private boolean canCreateInvoice(OrderStatus status) {
+        return OrderStatus.PAID.equals(status)
+                || OrderStatus.PROCESSING.equals(status)
+                || OrderStatus.COMPLETED.equals(status);
+    }
+
+    private String nextInvoiceNumber(LocalDateTime issuedAt) {
         long nextNumber = invoiceRepository.count() + 1;
-        return "INV-" + LocalDateTime.now().getYear() + "-" + String.format("%04d", nextNumber);
+        return invoiceNumberGenerator.generate(nextNumber, issuedAt);
     }
 }

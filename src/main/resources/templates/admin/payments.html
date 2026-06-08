@@ -2,67 +2,76 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-layout :: adminLayout('Payments', ~{::section})}">
 <body>
-<section class="space-y-6">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+<section class="nexa-admin-page space-y-5">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-700">Payment Operations</p>
-            <h2 class="mt-2 text-2xl font-semibold text-slate-950">Payments</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            <p class="nexa-section-label">Payment Operations</p>
+            <h2 class="nexa-admin-title">Payments</h2>
+            <p class="nexa-admin-description">
                 Review payment records and confirm pending bank transfer payments.
             </p>
         </div>
     </div>
 
-    <div th:if="${successMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+    <div th:if="${successMessage}" class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
         <span th:text="${successMessage}">Payment confirmed.</span>
     </div>
-    <div th:if="${errorMessage}" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+    <div th:if="${errorMessage}" class="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
         <span th:text="${errorMessage}">Payment error.</span>
     </div>
 
-    <div class="nexa-card overflow-hidden">
+    <section class="nexa-admin-surface overflow-hidden">
+        <div class="flex flex-col gap-3 border-b border-slate-100 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Payment Directory</p>
+                <h3 class="mt-1 text-base font-bold tracking-tight text-slate-950">Payment records</h3>
+            </div>
+            <p class="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200"
+               th:text="${#lists.size(payments) + ' payments'}">0 payments</p>
+        </div>
+
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50">
+            <table class="nexa-admin-table">
+                <thead>
                 <tr>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Payment</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Customer</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Order</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Method</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Amount</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Payment</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Order Status</th>
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Created</th>
-                    <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Action</th>
+                    <th scope="col">Payment</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Order</th>
+                    <th scope="col">Method</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Payment</th>
+                    <th scope="col">Order Status</th>
+                    <th scope="col">Created</th>
+                    <th scope="col" class="text-right">Action</th>
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
-                <tr th:each="payment : ${payments}" class="transition hover:bg-slate-50">
-                    <td class="px-5 py-4 text-sm font-semibold text-slate-950" th:text="${'#' + payment.id}">#1</td>
-                    <td class="px-5 py-4">
-                        <p class="text-sm font-semibold text-slate-950" th:text="${payment.customerName}">Customer</p>
-                        <p class="mt-1 text-xs text-slate-500" th:text="${payment.customerEmail}">customer@example.com</p>
+                <tbody>
+                <tr th:each="payment : ${payments}">
+                    <td class="font-bold text-slate-950" th:text="${'#' + payment.id}">#1</td>
+                    <td>
+                        <p class="text-sm font-bold text-slate-950" th:text="${payment.displayCustomerName}">Customer</p>
+                        <p class="mt-0.5 text-xs text-slate-500" th:text="${payment.customerEmail}">customer@example.com</p>
                     </td>
-                    <td class="px-5 py-4">
-                        <a th:href="@{/admin/orders/{id}(id=${payment.orderId})}" class="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+                    <td>
+                        <a th:href="@{/admin/orders/{id}(id=${payment.orderId})}" class="text-sm font-bold text-teal-700 hover:text-teal-800"
                            th:text="${'#' + payment.orderId}">#1</a>
                     </td>
-                    <td class="px-5 py-4 text-sm font-medium text-slate-700" th:text="${payment.paymentMethod}">EWALLET</td>
-                    <td class="px-5 py-4 text-sm font-semibold text-slate-950"
+                    <td class="font-semibold text-slate-700" th:text="${payment.paymentMethod}">EWALLET</td>
+                    <td class="font-bold text-slate-950"
                         th:text="${'Rp ' + #numbers.formatDecimal(payment.amount, 0, 'COMMA', 2, 'POINT')}">Rp 0.00</td>
-                    <td class="px-5 py-4">
+                    <td>
                         <span th:replace="~{fragments/payment-badge :: paymentBadge(${payment.paymentStatus.name()})}">PAID</span>
                     </td>
-                    <td class="px-5 py-4">
+                    <td>
                         <span th:replace="~{fragments/status-badge :: statusBadge(${payment.orderStatus.name()})}">PENDING</span>
                     </td>
-                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-600"
+                    <td class="whitespace-nowrap"
                         th:text="${#temporals.format(payment.createdAt, 'dd MMM yyyy HH:mm')}">01 Jun 2026 10:00</td>
-                    <td class="px-5 py-4 text-right">
+                    <td class="text-right">
                         <form th:if="${payment.confirmable}"
                               th:action="@{/admin/payments/{id}/confirm(id=${payment.id})}"
                               method="post">
-                            <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                            <button type="submit" class="inline-flex h-8 items-center justify-center rounded-xl bg-teal-700 px-3 text-sm font-semibold text-white transition hover:bg-teal-800">
                                 Confirm
                             </button>
                         </form>
@@ -70,14 +79,14 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(payments)}">
-                    <td colspan="9" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                    <td colspan="9" class="py-10 text-center text-sm font-medium text-slate-500">
                         No payments have been submitted yet.
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 </section>
 </body>
 </html>

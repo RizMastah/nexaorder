@@ -10,16 +10,19 @@ import com.raihan.nexaorder.entity.User;
 import com.raihan.nexaorder.enums.OrderStatus;
 import com.raihan.nexaorder.enums.PaymentMethod;
 import com.raihan.nexaorder.enums.PaymentStatus;
+import com.raihan.nexaorder.pattern.observer.InventoryObserver;
+import com.raihan.nexaorder.pattern.observer.NotificationObserver;
 import com.raihan.nexaorder.pattern.observer.OrderEventPublisher;
 import com.raihan.nexaorder.pattern.state.OrderState;
 import com.raihan.nexaorder.pattern.state.OrderStateFactory;
+import com.raihan.nexaorder.repository.NotificationRepository;
 import com.raihan.nexaorder.repository.OrderItemRepository;
 import com.raihan.nexaorder.repository.OrderRepository;
 import com.raihan.nexaorder.repository.PaymentRepository;
 import com.raihan.nexaorder.repository.ProductRepository;
 import com.raihan.nexaorder.repository.UserRepository;
+import com.raihan.nexaorder.service.InventoryService;
 import com.raihan.nexaorder.service.OrderService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -36,8 +38,27 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
-    private final OrderStateFactory orderStateFactory;
     private final OrderEventPublisher orderEventPublisher;
+    private final OrderStateFactory orderStateFactory;
+
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            OrderItemRepository orderItemRepository,
+                            ProductRepository productRepository,
+                            UserRepository userRepository,
+                            PaymentRepository paymentRepository,
+                            InventoryService inventoryService,
+                            NotificationRepository notificationRepository) {
+        this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.paymentRepository = paymentRepository;
+        this.orderStateFactory = OrderStateFactory.getInstance();
+        this.orderEventPublisher = new OrderEventPublisher();
+        // Manual Observer Pattern setup: observers are registered by application code, not auto-collected by Spring.
+        this.orderEventPublisher.registerObserver(new InventoryObserver(productRepository, inventoryService));
+        this.orderEventPublisher.registerObserver(new NotificationObserver(notificationRepository, userRepository));
+    }
 
     @Override
     @Transactional

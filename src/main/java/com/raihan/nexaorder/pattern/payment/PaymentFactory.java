@@ -1,21 +1,32 @@
 package com.raihan.nexaorder.pattern.payment;
 
 import com.raihan.nexaorder.enums.PaymentMethod;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+public final class PaymentFactory {
 
-@Component
-@RequiredArgsConstructor
-public class PaymentFactory {
+    private static final PaymentFactory INSTANCE = new PaymentFactory();
 
-    private final List<PaymentStrategy> strategies;
+    private PaymentFactory() {
+    }
+
+    public static PaymentFactory getInstance() {
+        return INSTANCE;
+    }
 
     public PaymentStrategy getStrategy(PaymentMethod paymentMethod) {
-        return strategies.stream()
-                .filter(strategy -> strategy.getPaymentMethod().equals(paymentMethod))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported payment method"));
+        return createStrategy(paymentMethod);
+    }
+
+    // Manual Factory Method + Strategy selection. Spring is not used to assemble these strategies.
+    public PaymentStrategy createStrategy(PaymentMethod paymentMethod) {
+        if (paymentMethod == null) {
+            throw new IllegalArgumentException("Payment method is required");
+        }
+
+        return switch (paymentMethod) {
+            case EWALLET -> new EWalletPaymentStrategy();
+            case BANK_TRANSFER -> new BankTransferPaymentStrategy();
+            case CASH_ON_DELIVERY -> new CashOnDeliveryPaymentStrategy();
+        };
     }
 }

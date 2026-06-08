@@ -41,6 +41,13 @@ public class DataSeeder {
                         .build();
 
                 userRepository.save(customer);
+            } else {
+                userRepository.findByEmail(customerEmail)
+                        .filter(user -> "NexaOrder Customer".equalsIgnoreCase(user.getName()))
+                        .ifPresent(user -> {
+                            user.setName("Ariel Hikmat");
+                            userRepository.save(user);
+                        });
             }
 
             if (productRepository.count() == 0) {
