@@ -14,7 +14,7 @@
         </svg>
         <span th:if="${unreadNotificationCount > 0}"
               class="absolute -right-0.5 -top-0.5 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-emerald-600 px-1 text-[0.68rem] font-bold leading-none text-white"
-              th:text="${unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}">1</span>
+              th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">1</span>
     </button>
 
     <div x-cloak

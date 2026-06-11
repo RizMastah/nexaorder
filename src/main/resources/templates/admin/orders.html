@@ -32,7 +32,7 @@
                             th:text="${statusValue}">PENDING</option>
                 </select>
             </div>
-            <button type="submit" class="nexa-accent-button">Filter</button>
+            <button type="submit" class="nexa-btn-secondary">Filter</button>
             <a th:href="@{/admin/orders}" class="nexa-btn-secondary">Reset</a>
         </div>
     </form>
@@ -44,7 +44,7 @@
                 <h3 class="mt-1 text-base font-bold tracking-tight text-slate-950">Customer orders</h3>
             </div>
             <p class="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200"
-               th:text="${#lists.size(orders) + ' orders'}">0 orders</p>
+               th:text="${totalOrders + ' orders'}">0 orders</p>
         </div>
 
         <div class="hidden overflow-x-auto md:block">
@@ -184,6 +184,30 @@
                 No orders match the current filter.
             </div>
         </div>
+
+        <nav th:if="${totalPages > 1}"
+             class="flex flex-col gap-3 border-t border-slate-100 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between"
+             aria-label="Order pages">
+            <p class="text-xs font-semibold text-slate-500"
+               th:text="${'Page ' + currentPage + ' of ' + totalPages}">Page 1 of 4</p>
+            <div class="flex flex-wrap items-center gap-1.5">
+                <a th:if="${currentPage > 1}"
+                   th:href="@{/admin/orders(status=${selectedStatus}, page=${currentPage - 1})}"
+                   class="inline-flex h-8 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    Prev
+                </a>
+                <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+                   th:href="@{/admin/orders(status=${selectedStatus}, page=${i})}"
+                   th:text="${i}"
+                   th:classappend="${i == currentPage} ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'"
+                   class="inline-flex h-8 min-w-8 items-center justify-center rounded-xl border px-2.5 text-sm font-semibold transition">1</a>
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{/admin/orders(status=${selectedStatus}, page=${currentPage + 1})}"
+                   class="inline-flex h-8 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    Next
+                </a>
+            </div>
+        </nav>
     </section>
 </section>
 </body>

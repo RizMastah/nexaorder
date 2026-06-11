@@ -268,10 +268,10 @@
                 return;
             }
 
-            var statusLabels = [[${report.orderStatusLabels}]];
-            var statusCounts = [[${report.orderStatusCounts}]];
-            var productLabels = [[${report.bestSellingProductLabels}]];
-            var productQuantities = [[${report.bestSellingProductQuantities}]];
+            var statusLabels = /*[[${report.orderStatusLabels}]]*/ [];
+            var statusCounts = /*[[${report.orderStatusCounts}]]*/ [];
+            var productLabels = /*[[${report.bestSellingProductLabels}]]*/ [];
+            var productQuantities = /*[[${report.bestSellingProductQuantities}]]*/ [];
 
             new Chart(document.getElementById("dashboardOrderStatusChart"), {
                 type: "doughnut",

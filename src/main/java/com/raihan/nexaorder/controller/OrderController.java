@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class OrderController {
@@ -110,9 +112,22 @@ public class OrderController {
         return "redirect:/customer/orders/" + id;
     }
 
+    private static final int ADMIN_ORDERS_PAGE_SIZE = 10;
+
     @GetMapping("/admin/orders")
-    public String adminOrders(@RequestParam(required = false) OrderStatus status, Model model) {
-        model.addAttribute("orders", orderService.getAllOrders(status));
+    public String adminOrders(@RequestParam(required = false) OrderStatus status,
+                              @RequestParam(defaultValue = "1") int page,
+                              Model model) {
+        List<OrderResponseDTO> allOrders = orderService.getAllOrders(status);
+        int totalPages = Math.max(1, (int) Math.ceil(allOrders.size() / (double) ADMIN_ORDERS_PAGE_SIZE));
+        int currentPage = Math.min(Math.max(page, 1), totalPages);
+        int fromIndex = (currentPage - 1) * ADMIN_ORDERS_PAGE_SIZE;
+        int toIndex = Math.min(fromIndex + ADMIN_ORDERS_PAGE_SIZE, allOrders.size());
+
+        model.addAttribute("orders", allOrders.subList(fromIndex, toIndex));
+        model.addAttribute("totalOrders", allOrders.size());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("selectedStatus", status);
         model.addAttribute("orderStatuses", OrderStatus.values());
         return "admin/orders";
